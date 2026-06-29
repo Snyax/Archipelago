@@ -14,6 +14,7 @@ locations: dict[str, X2WOTCLocationData] = {
         id = get_new_location_id(),
         type = "SoldierRank",
         tags = {"bounty_hunter", f"item:BountyHunterRank:{rank - 1}"},
+        difficulty = 10.0,  # You get one out of a CA
         dlc = None,
         normal_item = "BountyHunterRank"
     )
