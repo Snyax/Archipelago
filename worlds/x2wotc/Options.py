@@ -244,7 +244,7 @@ class ActiveTraps(OptionSet):
     value_to_item = {
         "DoomTrap": "Doom:1",
         "MarketTrap": "HideBlackMarket:3",
-        "YapTrap": "YapCentral:5",
+        "YapTrap": "YapCentral:7",
         "ADVENTTrap": "AdventReinforcement",
         "AlienTrap": "AlienReinforcement",
         "AmmoTrap": "NoAmmo",

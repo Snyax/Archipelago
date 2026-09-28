@@ -1270,7 +1270,7 @@ strategy_trap_items: dict[str, X2WOTCItemData] = {
         type = "Trap",
         tags = {}
     ),
-    "YapCentral:5": X2WOTCItemData(
+    "YapCentral:7": X2WOTCItemData(
         display_name = TRAP_ITEM_PREFIX + "Yap Central",
         id = get_new_item_id(),
         classification = IC.trap,
