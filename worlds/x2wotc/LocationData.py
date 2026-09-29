@@ -10,6 +10,38 @@ SOLDIER_RANK_LOCATION_PREFIX = "Promote "
 SOLDIER_RANK_LOCATION_INFIX = " to "
 COVERT_ACTION_LOCATION_PREFIX = "Complete "
 
+DEFAULT_RANK_NAMES = [
+    "Rookie",
+    "Squaddie",
+    "Corporal",
+    "Sergeant",
+    "Lieutenant",
+    "Captain",
+    "Major",
+    "Colonel",
+    "Brigadier",
+]
+PSI_RANK_NAMES = [
+    "Rookie",
+    "Initiate",
+    "Acolyte",
+    "Adept",
+    "Disciple",
+    "Mystic",
+    "Warlock",
+    "Magus",
+]
+SPARK_RANK_NAMES = [
+    "Rookie",
+    "Squire",
+    "Aspirant",
+    "Knight",
+    "Cavalier",
+    "Vanguard",
+    "Paladin",
+    "Champion",
+]
+
 
 class X2WOTCLocationData(NamedTuple):
     display_name: str
@@ -971,14 +1003,7 @@ human_soldier_ranks: dict[str, X2WOTCLocationData] = {
         ("Skirmisher", "WOTC"),
         ("Templar", "WOTC"),
     ]
-    for (rank, rank_name) in [
-        (2, "Corporal"),
-        (3, "Sergeant"),
-        (4, "Lieutenant"),
-        (5, "Captain"),
-        (6, "Major"),
-        (7, "Colonel"),
-    ]
+    for (rank, rank_name) in list(enumerate(DEFAULT_RANK_NAMES))[2:8]
 }
 
 spark_soldier_ranks: dict[str, X2WOTCLocationData] = {
@@ -991,14 +1016,7 @@ spark_soldier_ranks: dict[str, X2WOTCLocationData] = {
         difficulty = 40.0,  # 100 supplies, 2 cores, 20 alloys, 15 elerium (1 PG project)
         normal_item = "SparkRank"
     )
-    for (rank, rank_name) in [
-        (2, "Aspirant"),
-        (3, "Knight"),
-        (4, "Cavalier"),
-        (5, "Vanguard"),
-        (6, "Paladin"),
-        (7, "Champion"),
-    ]
+    for (rank, rank_name) in list(enumerate(SPARK_RANK_NAMES))[2:8]
 }
 
 ########################################################################################################################

@@ -1,11 +1,9 @@
+from collections import defaultdict
 from copy import deepcopy
 from logging import warning
-from typing import TYPE_CHECKING
+from typing import Any
 
 from BaseClasses import Location
-
-if TYPE_CHECKING:
-    from worlds.x2wotc import X2WOTCWorld
 
 from .EnemyRando import EnemyRandoManager
 from .LocationData import X2WOTCLocationData, location_table
@@ -41,52 +39,34 @@ loc_id_to_key = {
 }
 
 # Location groups
-loc_groups: dict[str, set[str]] = {}
-
-# Location type groups
-loc_types: set[str] = set()
-for loc_data in location_table.values():
-    if loc_data.id and "example" not in loc_data.type.lower():
-        loc_types.add(loc_data.type)
-for loc_type in loc_types:
-    loc_groups[loc_type] = {
-        loc_data.display_name
-        for loc_data in location_table.values()
-        if loc_data.id and loc_data.type == loc_type
-    }
-
-# Location tag groups
-loc_tags: set[str] = set()
+loc_groups: dict[str, set[str]] = defaultdict(set)
 for loc_data in location_table.values():
     if loc_data.id:
-        loc_tags.update({
-            tag
-            for tag in loc_data.tags
-            if all(x not in tag.lower() for x in ["example", ":"])
-        })
-for loc_tag in loc_tags:
-    loc_groups[
-        "".join(word.capitalize() for word in loc_tag.split("_"))  # Convert snake_case tag to PascalCase
-    ] = {
-        loc_data.display_name
-        for loc_data in location_table.values()
-        if loc_data.id and loc_tag in loc_data.tags
-    }
+        # Type
+        loc_groups[loc_data.type].add(loc_data.display_name)
+        # DLC
+        if loc_data.dlc:
+            loc_groups[loc_data.dlc].add(loc_data.display_name)
+        # Tags
+        for tag in loc_data.tags:
+            if ":" not in tag:
+                # Convert snake_case tag to PascalCase
+                tag = "".join(word.capitalize() for word in tag.split("_"))
+                loc_groups[tag].add(loc_data.display_name)
 
 
 class LocationManager:
     loc_display_name_to_id = loc_display_name_to_id
     loc_display_name_to_key = loc_display_name_to_key
     loc_id_to_key = loc_id_to_key
-
-    loc_types = loc_types
     loc_groups = loc_groups
 
-    def __init__(self, world: "X2WOTCWorld"):
-        self.enemy_rando_manager: EnemyRandoManager = world.enemy_rando_manager
+    def __init__(self, enemy_rando_manager: EnemyRandoManager):
+        self.enemy_rando_manager: EnemyRandoManager = enemy_rando_manager
         self.autopsy_difficulty: float = 3.0
 
         self.location_table: dict[str, X2WOTCLocationData] = deepcopy(location_table)
+        self.replaced: dict[str, dict[str, Any]] = defaultdict(dict)
         self.locked: bool = False
 
         self.enabled: dict[str, bool] = {loc_name: True for loc_name in self.location_table.keys()}
@@ -98,6 +78,7 @@ class LocationManager:
 
         loc_data = self.location_table[loc_name]
         self.location_table[loc_name] = loc_data.replace(**kwargs)
+        self.replaced[loc_name].update(kwargs)
 
     def get_location_difficulty(self, loc_name: str) -> float:
         loc_data = self.location_table[loc_name]
