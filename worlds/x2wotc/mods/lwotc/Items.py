@@ -3,8 +3,7 @@ from BaseClasses import ItemClassification as IC
 from worlds.x2wotc.ItemData import X2WOTCItemData, TECH_ITEM_PREFIX, PCS_ITEM_PREFIX, WEAPON_MOD_ITEM_PREFIX, get_new_item_id
 
 
-# For the full definition of X2WOTCItemData, see worlds/x2wotc/ItemData.py
-lwotc_items: dict[str, X2WOTCItemData] = {
+lwotc_techs: dict[str, X2WOTCItemData] = {
     "LaserWeaponsCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Laser Weapons",
         id = get_new_item_id(),
@@ -51,7 +50,7 @@ lwotc_items: dict[str, X2WOTCItemData] = {
         normal_location = "AdvancedCoilguns"
     ),
     "ProgressiveRifleTechLwotcCompleted": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Rifle (LWOTC)",
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Rifle",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -64,7 +63,7 @@ lwotc_items: dict[str, X2WOTCItemData] = {
         ]
     ),
     "ProgressiveRifleTechLwotcCompleted+": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Rifle+ (LWOTC)",
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Rifle+",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -78,7 +77,7 @@ lwotc_items: dict[str, X2WOTCItemData] = {
         ]
     ),
     "ProgressiveAdvancedWeaponTechLwotcCompleted": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Advanced Weapons (LWOTC)",
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Advanced Weapons",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -94,7 +93,7 @@ lwotc_items: dict[str, X2WOTCItemData] = {
         shuffle_stages = {3, 4, 5}
     ),
     "ProgressiveHeavyArmorTechLwotcCompleted": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Heavy Armor (LWOTC)",
+        display_name = TECH_ITEM_PREFIX + "Progressive Heavy Armor",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -105,7 +104,7 @@ lwotc_items: dict[str, X2WOTCItemData] = {
         ]
     ),
     "ProgressiveLightArmorTechLwotcCompleted": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Light Armor (LWOTC)",
+        display_name = TECH_ITEM_PREFIX + "Progressive Light Armor",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -125,7 +124,7 @@ lwotc_items: dict[str, X2WOTCItemData] = {
         normal_location = "AutopsyDrone"
     ),
     "ProgressiveGREMLINTechLwotcCompleted": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive GREMLIN (LWOTC)",
+        display_name = TECH_ITEM_PREFIX + "Progressive LW GREMLIN",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -133,6 +132,18 @@ lwotc_items: dict[str, X2WOTCItemData] = {
         stages = [
             "AutopsyDroneCompleted",
             "AutopsySectopodCompleted",
+        ]
+    ),
+    "ProgressivePsionicsTechLwotcCompleted": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Psionics",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"facility", "weapon", "progressive"},
+        stages = [
+            "PsionicsCompleted",
+            "EleriumCompleted",
+            "AutopsyGatekeeperCompleted",
         ]
     ),
     "AutopsyMutonEliteCompleted": X2WOTCItemData(
@@ -377,7 +388,7 @@ lwotc_weapon_mod_items: dict[str, X2WOTCItemData] = {
 }
 
 items: dict[str, X2WOTCItemData] = {
-    **lwotc_items,
+    **lwotc_techs,
     **lwotc_pcs_items,
     **lwotc_weapon_mod_items,
 }

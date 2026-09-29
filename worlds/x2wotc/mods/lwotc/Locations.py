@@ -8,7 +8,7 @@ from worlds.x2wotc.LocationData import (
 )
 
 
-def clamp(x, min_, max_):
+def clamp(x: int | float, min_: int | float, max_: int | float):
     return max(min(x, max_), min_)
 
 def fl_to_diff(fl: int):
