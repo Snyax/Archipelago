@@ -119,7 +119,7 @@ class ItemManager:
         if not item_data.stages or not item_data.shuffle_stages:
             raise ValueError(f"Cannot shuffle stages for item {item_name}.")
 
-        shuffled_indices = list(item_data.shuffle_stages)
+        shuffled_indices = sorted(item_data.shuffle_stages)
         random.shuffle(shuffled_indices)
         shuffled_stages = [
             stage if index not in item_data.shuffle_stages
