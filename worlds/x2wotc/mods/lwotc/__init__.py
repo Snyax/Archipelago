@@ -79,10 +79,9 @@ def generate_early(world: "X2WOTCWorld"):
         world.item_manager.enable_progressive_item("ProgressiveGREMLINTechLwotcCompleted")
 
     # Advanced Psi Amps require Elerium
-    world.item_manager.disable_progressive_item("ProgressivePsionicsTechCompleted")
     if "PsionicsTech" in world.options.progressive_items:
-        if not world.item_manager.enable_progressive_item("ProgressivePsionicsTechLwotcCompleted"):
-            warning(f"X2WOTC: Failed to enable progressive LWOTC Psionics tech for player {world.player_name}")
+        world.item_manager.disable_progressive_item("ProgressivePsionicsTechCompleted")
+        world.item_manager.enable_progressive_item("ProgressivePsionicsTechLwotcCompleted")
 
     # Light and Heavy Armor are researches, not PG projects
     if "ArmorTech" in world.options.progressive_items:
