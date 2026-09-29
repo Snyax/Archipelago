@@ -8,6 +8,8 @@ ENEMY_DESTROY_LOCATION_PREFIX = "Destroy "
 ITEM_USE_LOCATION_PREFIX = "Use "
 SOLDIER_RANK_LOCATION_PREFIX = "Promote "
 SOLDIER_RANK_LOCATION_INFIX = " to "
+COVERT_ACTION_LOCATION_PREFIX = "Complete "
+
 DEFAULT_RANK_NAMES = [
     "Rookie",
     "Squaddie",
@@ -19,7 +21,26 @@ DEFAULT_RANK_NAMES = [
     "Colonel",
     "Brigadier",
 ]
-COVERT_ACTION_LOCATION_PREFIX = "Complete "
+PSI_RANK_NAMES = [
+    "Rookie",
+    "Initiate",
+    "Acolyte",
+    "Adept",
+    "Disciple",
+    "Mystic",
+    "Warlock",
+    "Magus",
+]
+SPARK_RANK_NAMES = [
+    "Rookie",
+    "Squire",
+    "Aspirant",
+    "Knight",
+    "Cavalier",
+    "Vanguard",
+    "Paladin",
+    "Champion",
+]
 
 
 class X2WOTCLocationData(NamedTuple):
@@ -995,14 +1016,7 @@ spark_soldier_ranks: dict[str, X2WOTCLocationData] = {
         difficulty = 40.0,  # 100 supplies, 2 cores, 20 alloys, 15 elerium (1 PG project)
         normal_item = "SparkRank"
     )
-    for (rank, rank_name) in [
-        (2, "Aspirant"),
-        (3, "Knight"),
-        (4, "Cavalier"),
-        (5, "Vanguard"),
-        (6, "Paladin"),
-        (7, "Champion"),
-    ]
+    for (rank, rank_name) in list(enumerate(SPARK_RANK_NAMES))[2:8]
 }
 
 ########################################################################################################################
