@@ -2,13 +2,12 @@ import asyncio
 import os
 import re
 from typing import TYPE_CHECKING, Any
-import zipfile
 
 from CommonClient import gui_enabled, logger
 from CommonClient import get_base_parser, handle_url_arg, server_loop
 from MultiServer import mark_raw
 from settings import Settings, get_settings
-from Utils import async_start, get_intended_text, open_filename, tuplize_version
+from Utils import async_start, get_intended_text, tuplize_version
 
 # Import Context and CommandProcessor from CommonClient when TrackerClient is not available, or for type checking
 try:
@@ -147,49 +146,6 @@ class X2WOTCCommandProcessor(ClientCommandProcessor):
         else:
             self.output("No active mods found.")
 
-        return True
-
-    def _cmd_install_mod(self) -> bool:
-        """Install an APWorld mod; never install files from untrusted sources
-        or without prior inspection, as they may contain arbitrary Python code"""
-        mod_path = open_filename("Select mod file", [("x2wotc mod", [".py", ".zip"])])
-        if not mod_path:
-            self.output("No file selected.")
-            return False
-
-        apworld_path = f"{__file__.split(".apworld")[0]}.apworld"
-        arcname = f"x2wotc/mods/{os.path.basename(mod_path)}"
-        with zipfile.ZipFile(apworld_path, "a") as apworld_file:
-
-            # If the mod is a .py file, add it directly to the archive
-            if mod_path.endswith(".py"):
-                apworld_file.write(mod_path, arcname=arcname)
-
-            # If the mod is a .zip file, extract its contents and add them to the archive
-            if mod_path.endswith(".zip"):
-                with zipfile.ZipFile(mod_path, "r") as mod_zip_file:
-                    for file_name in mod_zip_file.namelist():
-                        arcname = f"x2wotc/mods/{file_name}"
-                        with mod_zip_file.open(file_name) as file:
-                            apworld_file.writestr(arcname, file.read())
-
-        self.output("Mod installed. Please restart the client.")
-        return True
-
-    def _cmd_clear_mods(self) -> bool:
-        """Uninstall all APWorld mods, including those originally bundled with the release"""
-        apworld_path = f"{__file__.split(".apworld")[0]}.apworld"
-        temp_path = f"{apworld_path}.tmp"
-
-        with zipfile.ZipFile(apworld_path, "r") as apworld_file:
-            with zipfile.ZipFile(temp_path, "w") as temp_file:
-                for file_name in apworld_file.namelist():
-                    if not file_name.startswith("x2wotc/mods/") or file_name == "x2wotc/mods/__init__.py":
-                        with apworld_file.open(file_name) as file:
-                            temp_file.writestr(file_name, file.read())
-        os.replace(temp_path, apworld_path)
-
-        self.output("All mods uninstalled. Please restart the client.")
         return True
 
     @mark_raw
