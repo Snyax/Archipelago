@@ -985,14 +985,14 @@ wotc_item_uses: dict[str, X2WOTCLocationData] = {
 ##                                           SOLDIER RANK LOCATIONS                                                   ##
 ########################################################################################################################
 
-human_soldier_ranks: dict[str, X2WOTCLocationData] = {
-    f"{soldier_class.title()}Rank{rank}": X2WOTCLocationData(
+default_soldier_ranks: dict[str, X2WOTCLocationData] = {
+    f"{soldier_class}Rank{rank}": X2WOTCLocationData(
         display_name = SOLDIER_RANK_LOCATION_PREFIX + soldier_class + SOLDIER_RANK_LOCATION_INFIX + rank_name,
         id = get_new_location_id(),
         type = "SoldierRank",
-        tags = {soldier_class.lower(), f"item:{soldier_class.title()}Rank:{rank - 1}"},
+        tags = {soldier_class.lower(), f"item:{soldier_class}Rank:{rank - 1}"},
         dlc = dlc,
-        normal_item = f"{soldier_class.title()}Rank"
+        normal_item = f"{soldier_class}Rank"
     )
     for (soldier_class, dlc) in [
         ("Ranger", None),
@@ -1162,7 +1162,7 @@ item_use_location_table: dict[str, X2WOTCLocationData] = {
 }
 
 soldier_rank_location_table: dict[str, X2WOTCLocationData] = {
-    **human_soldier_ranks,
+    **default_soldier_ranks,
     **spark_soldier_ranks,
 }
 
