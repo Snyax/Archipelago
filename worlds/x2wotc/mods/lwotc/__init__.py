@@ -16,15 +16,15 @@ name = "Long War of the Chosen"
 location_map = {
     "GaussWeapons": "_GaussWeapons_LW",
     "SkirmisherRank2": "_Skirmisher_LWRank2",
-    "SkirmisherRank3": "_Skirmisher_LWRank3",
-    "SkirmisherRank4": "_Skirmisher_LWRank4",
+    "SkirmisherRank3": "SkirmisherRank2",  # Corporal
+    "SkirmisherRank4": "SkirmisherRank3",  # Sergeant
     "SkirmisherRank5": "_Skirmisher_LWRank5",
     "SkirmisherRank6": "_Skirmisher_LWRank6",
     "SkirmisherRank7": "_Skirmisher_LWRank7",
     "SkirmisherRank8": "_Skirmisher_LWRank8",
     "ReaperRank2": "_Reaper_LWRank2",
-    "ReaperRank3": "_Reaper_LWRank3",
-    "ReaperRank4": "_Reaper_LWRank4",
+    "ReaperRank3": "ReaperRank2",  # Corporal
+    "ReaperRank4": "ReaperRank3",  # Sergeant
     "ReaperRank5": "_Reaper_LWRank5",
     "ReaperRank6": "_Reaper_LWRank6",
     "ReaperRank7": "_Reaper_LWRank7",
@@ -36,13 +36,6 @@ location_map = {
     "TemplarRank6": "_Templar_LWRank6",
     "TemplarRank7": "_Templar_LWRank7",
     "TemplarRank8": "_Templar_LWRank8",
-    "SparkRank2": "_Spark_LWRank2",
-    "SparkRank3": "_Spark_LWRank3",
-    "SparkRank4": "_Spark_LWRank4",
-    "SparkRank5": "_Spark_LWRank5",
-    "SparkRank6": "_Spark_LWRank6",
-    "SparkRank7": "_Spark_LWRank7",
-    "SparkRank8": "_Spark_LWRank8",
 }
 item_map = {
     "_GaussWeaponsCompleted_LW": "GaussWeaponsCompleted",
@@ -55,10 +48,14 @@ item_map = {
     "_FreeKillUpgrade_Bsc_LW:1": "FreeKillUpgrade_Bsc:1",
     "_FreeKillUpgrade_Adv_LW:1": "FreeKillUpgrade_Adv:1",
     "_FreeKillUpgrade_Sup_LW:1": "FreeKillUpgrade_Sup:1",
-    "_Skirmisher_LWRank": "SkirmisherRank",
-    "_Reaper_LWRank": "ReaperRank",
-    "_Templar_LWRank": "TemplarRank",
-    "_Spark_LWRank": "SparkRank",
+    "AssaultRank": "LWS_AssaultRank",
+    "GrenadierRank": "LWS_GrenadierRank",
+    "GunnerRank": "LWS_GunnerRank",
+    "RangerRank": "LWS_RangerRank",
+    "SharpshooterRank": "LWS_SharpshooterRank",
+    "ShinobiRank": "LWS_ShinobiRank",
+    "SpecialistRank": "LWS_SpecialistRank",
+    "TechnicalRank": "LWS_TechnicalRank",
 }
 
 # For defining the order rules are applied in (in case of set_rule)
@@ -121,20 +118,6 @@ def generate_early(world: "X2WOTCWorld"):
     world.loc_manager.disable_location("GaussWeapons")
     world.item_manager.disable_item("GaussWeaponsCompleted")
 
-    # Repeaters are called Suppressors, Superior attachments are called Elite
-    world.item_manager.weapon_mod_items.difference_update([
-        "AimUpgrade_Sup:1",
-        "CritUpgrade_Sup:1",
-        "ReloadUpgrade_Sup:1",
-        "MissDamageUpgrade_Sup:1",
-        "FreeFireUpgrade_Sup:1",
-        "ClipSizeUpgrade_Sup:1",
-        "FreeKillUpgrade_Bsc:1",
-        "FreeKillUpgrade_Adv:1",
-        "FreeKillUpgrade_Sup:1",
-    ])
-    world.item_manager.weapon_mod_items.update(set(lwotc_weapon_mod_items.keys()))
-
     # Rocket Launcher is a squaddie Technical skill
     world.loc_manager.disable_location("UseRocketLauncher")
 
@@ -150,23 +133,36 @@ def generate_early(world: "X2WOTCWorld"):
     world.loc_manager.disable_location("UseExperimentalHeavyWeapon")
     world.loc_manager.disable_location("UseExperimentalPoweredWeapon")
 
-    # Base game classes are disabled
-    for soldier_class in [
-        "Ranger",
-        "Grenadier",
-        "Specialist",
-        "Sharpshooter",
-        "Reaper",
-        "Skirmisher",
-        "Templar",
-        "SPARK",
+    # Override base game soldier ranks
+    for (soldier_class, disable_ranks) in [
+        ("Ranger", range(2, 8)),
+        ("Grenadier", range(2, 8)),
+        ("Specialist", range(2, 8)),
+        ("Sharpshooter", range(2, 8)),
+        ("Reaper", range(4, 8)),  # Keep Corporal/Sergeant
+        ("Skirmisher", range(4, 8)),  # Keep Corporal/Sergeant
+        ("Templar", range(2, 8)),
     ]:
-        for rank in range(2, 8):
-            world.loc_manager.disable_location(f"{soldier_class.title()}Rank{rank}")
-            world.item_manager.remove_item(f"{soldier_class.title()}Rank")
+        for rank in disable_ranks:
+            world.loc_manager.disable_location(f"{soldier_class}Rank{rank}")
+            world.item_manager.remove_item(f"{soldier_class}Rank")
 
     # Patch LWOTC PCSes into item pool
     world.item_manager.pcs_items.update(set(lwotc_pcs_items.keys()))
+
+    # Repeaters are called Suppressors, Superior attachments are called Elite
+    world.item_manager.weapon_mod_items.difference_update([
+        "AimUpgrade_Sup:1",
+        "CritUpgrade_Sup:1",
+        "ReloadUpgrade_Sup:1",
+        "MissDamageUpgrade_Sup:1",
+        "FreeFireUpgrade_Sup:1",
+        "ClipSizeUpgrade_Sup:1",
+        "FreeKillUpgrade_Bsc:1",
+        "FreeKillUpgrade_Adv:1",
+        "FreeKillUpgrade_Sup:1",
+    ])
+    world.item_manager.weapon_mod_items.update(set(lwotc_weapon_mod_items.keys()))
 
     for item, cat in [
         ("ModularWeaponsCompleted", IC.progression | IC.useful),
@@ -202,6 +198,10 @@ def generate_early(world: "X2WOTCWorld"):
         ("UseSmokeGrenadeMk2", PG_GRENADE_M2),
         ("UseProximityMine", {"item:AutopsySectopodCompleted"} | PG_GRENADE_M2),
         ("UseMimicBeacon", {"utility", "item:PsiGateCompleted",} | PG_GRENADE_M2 - {"grenade"}),
+        ("SkirmisherRank2", {"skirmisher", "item:SkirmisherRank:2"}),  # Corporal
+        ("SkirmisherRank3", {"skirmisher", "item:SkirmisherRank:3"}),  # Sergeant
+        ("ReaperRank2", {"reaper", "item:ReaperRank:2"}),  # Corporal
+        ("ReaperRank3", {"reaper", "item:ReaperRank:3"}),  # Sergeant
         ("ChosenHuntPt1:1", {"chosen_hunt", "meet_first_chosen", "influence:0"}),
         ("ChosenHuntPt1:2", {"chosen_hunt", "meet_first_chosen", "influence:0"}),
         ("ChosenHuntPt1:3", {"chosen_hunt", "meet_first_chosen", "influence:0"}),
