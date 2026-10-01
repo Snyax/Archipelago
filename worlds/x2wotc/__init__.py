@@ -156,11 +156,17 @@ class X2WOTCWorld(World):
 
         # Enable progressive tech items
         if "GunTech+" in self.options.progressive_items:
-            self.item_manager.enable_progressive_item("ProgressiveRifleShotgunTechCompleted+", random=self.random)
-            self.item_manager.enable_progressive_item("ProgressiveCannonSniperTechCompleted", random=self.random)
+            if self.options.split_progressive_items == "none":
+                self.item_manager.enable_progressive_item("ProgressiveGunTechCompleted+", random=self.random)
+            elif self.options.split_progressive_items == "vanilla":
+                self.item_manager.enable_progressive_item("ProgressiveRifleShotgunTechCompleted+", random=self.random)
+                self.item_manager.enable_progressive_item("ProgressiveCannonSniperTechCompleted", random=self.random)
         elif "GunTech" in self.options.progressive_items:
-            self.item_manager.enable_progressive_item("ProgressiveRifleShotgunTechCompleted", random=self.random)
-            self.item_manager.enable_progressive_item("ProgressiveCannonSniperTechCompleted", random=self.random)
+            if self.options.split_progressive_items == "none":
+                self.item_manager.enable_progressive_item("ProgressiveGunTechCompleted", random=self.random)
+            elif self.options.split_progressive_items == "vanilla":
+                self.item_manager.enable_progressive_item("ProgressiveRifleShotgunTechCompleted", random=self.random)
+                self.item_manager.enable_progressive_item("ProgressiveCannonSniperTechCompleted", random=self.random)
         if "ArmorTech+" in self.options.progressive_items:
             self.item_manager.enable_progressive_item("ProgressiveArmorTechCompleted+")
         elif "ArmorTech" in self.options.progressive_items:

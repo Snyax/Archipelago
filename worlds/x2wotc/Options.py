@@ -179,6 +179,21 @@ class ProgressiveItems(OptionSet):
     ])
 
 
+class SplitProgressiveItems(Choice):
+    """Split eligible progressive items into separate upgrade tracks.
+
+    none:       Progressive items are not split and may contain upgrades from disparate tracks.
+    vanilla:    Progressive items are partially split while maintaining vanilla grouping of upgrades.
+    
+    Example: '[Tech] Progressive Gun' contains upgrades for all guns in an order consistent with the tech tree.
+    With the vanilla option, it is split into '[Tech] Progressive Rifle/Shotgun' and '[Tech] Progressive Cannon/Sniper',
+    inspired by the vanilla upgrades provided by individual techs."""
+    display_name = "Split Progressive Items"
+    option_none = 0
+    option_vanilla = 1
+    default = option_none
+
+
 class ChosenWeaponFragments(Choice):
     """Split Chosen weapons into two or three fragments each. Collect all fragments to unlock the corresponding tech.
     This should decrease the likelihood of receiving Chosen weapons too early and trivializing the game.
@@ -492,6 +507,7 @@ class X2WOTCOptions(PerGameCommonOptions):
 
     # Item options
     progressive_items: ProgressiveItems
+    split_progressive_items: SplitProgressiveItems
     chosen_weapon_fragments: ChosenWeaponFragments
     early_proving_ground: EarlyProvingGround
 
@@ -565,6 +581,7 @@ x2wotc_option_groups: list[OptionGroup] = [
         "Item Options",
         [
             ProgressiveItems,
+            SplitProgressiveItems,
             ChosenWeaponFragments,
             EarlyProvingGround,
         ]

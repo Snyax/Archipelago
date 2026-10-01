@@ -49,6 +49,47 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
         power = 150.0,
         normal_location = "AdvancedCoilguns"
     ),
+    "ProgressiveGunTechLwotcCompleted": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Gun",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"weapon", "progressive"},
+        stages = [
+            "LaserWeaponsCompleted",
+            "AdvancedLasersCompleted",
+            "MagnetizedWeaponsCompleted",
+            "_GaussWeaponsCompleted_LW",
+            "CoilgunsCompleted",
+            "AdvancedCoilgunsCompleted",
+            "PlasmaRifleCompleted",
+            "HeavyPlasmaCompleted",
+            "PlasmaSniperCompleted",
+            "AlloyCannonCompleted",
+        ],
+        shuffle_stages = {7, 8, 9}
+    ),
+    "ProgressiveGunTechLwotcCompleted+": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Gun+",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"weapon", "progressive"},
+        stages = [
+            "ModularWeaponsCompleted",
+            "LaserWeaponsCompleted",
+            "AdvancedLasersCompleted",
+            "MagnetizedWeaponsCompleted",
+            "_GaussWeaponsCompleted_LW",
+            "CoilgunsCompleted",
+            "AdvancedCoilgunsCompleted",
+            "PlasmaRifleCompleted",
+            "HeavyPlasmaCompleted",
+            "PlasmaSniperCompleted",
+            "AlloyCannonCompleted",
+        ],
+        shuffle_stages = {8, 9, 10}
+    ),
     "ProgressiveRifleTechLwotcCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive LW Rifle",
         id = get_new_item_id(),

@@ -550,6 +550,39 @@ wotc_chosen_weapon_tech_items: dict[str, X2WOTCItemData] = {
 #-----------------------------------------------------------------------------------------------------------------------
 
 progressive_tech_items: dict[str, X2WOTCItemData] = {
+    "ProgressiveGunTechCompleted": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive Gun",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"weapon", "progressive"},
+        stages = [
+            "MagnetizedWeaponsCompleted",
+            "GaussWeaponsCompleted",
+            "PlasmaRifleCompleted",
+            "AlloyCannonCompleted",
+            "HeavyPlasmaCompleted",
+            "PlasmaSniperCompleted",
+        ],
+        shuffle_stages = {3, 4, 5}
+    ),
+    "ProgressiveGunTechCompleted+": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive Gun+",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"weapon", "progressive"},
+        stages = [
+            "ModularWeaponsCompleted",
+            "MagnetizedWeaponsCompleted",
+            "GaussWeaponsCompleted",
+            "PlasmaRifleCompleted",
+            "AlloyCannonCompleted",
+            "HeavyPlasmaCompleted",
+            "PlasmaSniperCompleted",
+        ],
+        shuffle_stages = {4, 5, 6}
+    ),
     "ProgressiveRifleShotgunTechCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive Rifle/Shotgun",
         id = get_new_item_id(),

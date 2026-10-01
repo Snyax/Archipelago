@@ -63,15 +63,23 @@ def generate_early(world: "X2WOTCWorld"):
 
     # Weapons have 5 tiers
     if "GunTech+" in world.options.progressive_items:
-        world.item_manager.disable_progressive_item("ProgressiveRifleShotgunTechCompleted+")
-        world.item_manager.disable_progressive_item("ProgressiveCannonSniperTechCompleted")
-        world.item_manager.enable_progressive_item("ProgressiveRifleTechLwotcCompleted+")
-        world.item_manager.enable_progressive_item("ProgressiveAdvancedWeaponTechLwotcCompleted", random=world.random)
+        if world.options.split_progressive_items == "none":
+            world.item_manager.disable_progressive_item("ProgressiveGunTechCompleted+")
+            world.item_manager.enable_progressive_item("ProgressiveGunTechLwotcCompleted+", random=world.random)
+        elif world.options.split_progressive_items == "vanilla":
+            world.item_manager.disable_progressive_item("ProgressiveRifleShotgunTechCompleted+")
+            world.item_manager.disable_progressive_item("ProgressiveCannonSniperTechCompleted")
+            world.item_manager.enable_progressive_item("ProgressiveRifleTechLwotcCompleted+")
+            world.item_manager.enable_progressive_item("ProgressiveAdvancedWeaponTechLwotcCompleted", random=world.random)
     elif "GunTech" in world.options.progressive_items:
-        world.item_manager.disable_progressive_item("ProgressiveRifleShotgunTechCompleted")
-        world.item_manager.disable_progressive_item("ProgressiveCannonSniperTechCompleted")
-        world.item_manager.enable_progressive_item("ProgressiveRifleTechLwotcCompleted")
-        world.item_manager.enable_progressive_item("ProgressiveAdvancedWeaponTechLwotcCompleted", random=world.random)
+        if world.options.split_progressive_items == "none":
+            world.item_manager.disable_progressive_item("ProgressiveGunTechCompleted")
+            world.item_manager.enable_progressive_item("ProgressiveGunTechLwotcCompleted", random=world.random)
+        elif world.options.split_progressive_items == "vanilla":
+            world.item_manager.disable_progressive_item("ProgressiveRifleShotgunTechCompleted")
+            world.item_manager.disable_progressive_item("ProgressiveCannonSniperTechCompleted")
+            world.item_manager.enable_progressive_item("ProgressiveRifleTechLwotcCompleted")
+            world.item_manager.enable_progressive_item("ProgressiveAdvancedWeaponTechLwotcCompleted", random=world.random)
 
     # GREMLINs are upgraded from ADVENT Robotics
     if "GREMLINTech" in world.options.progressive_items:
