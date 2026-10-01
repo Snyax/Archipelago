@@ -100,7 +100,7 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
         shuffle_stages = {3, 4, 5}
     ),
     "ProgressiveHeavyArmorTechLwotcCompleted": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Heavy Armor",
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Heavy Armor",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -111,7 +111,7 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
         ]
     ),
     "ProgressiveLightArmorTechLwotcCompleted": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Light Armor",
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Light Armor",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -198,6 +198,23 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
         power = 200.0,
         normal_location = "WraithSuit"
     ),
+}
+
+lwotc_promotion_items: dict[str, X2WOTCItemData] = {
+    f"{soldier_class}Rank": X2WOTCItemData(
+        display_name = PROMOTION_ITEM_PREFIX + soldier_class,
+        id = get_new_item_id(),
+        classification = IC.progression,
+        type = "Promotion",
+        tags = {soldier_class.lower()},
+        power = 15.0
+    )
+    for soldier_class in [
+        "Assault",
+        "Gunner",
+        "Shinobi",
+        "Technical",
+    ]
 }
 
 lwotc_pcs_items: dict[str, X2WOTCItemData] = {
@@ -394,48 +411,9 @@ lwotc_weapon_mod_items: dict[str, X2WOTCItemData] = {
     ),
 }
 
-lwotc_native_promotion_items: dict[str, X2WOTCItemData] = {
-    f"LWS_{class_name.title()}Rank": X2WOTCItemData(
-        display_name = PROMOTION_ITEM_PREFIX + "LW " + class_name,
-        id = get_new_item_id(),
-        classification = IC.progression,
-        type = "Promotion",
-        tags = {f"{class_name.lower()}"},
-        power = 15.0,
-    )
-    for class_name in [
-        "Assault",
-        "Grenadier",
-        "Gunner",
-        "Ranger",
-        "Sharpshooter",
-        "Shinobi",
-        "Specialist",
-        "Technical",
-    ]
-}
-
-lwotc_modified_promotion_items = {
-    f"_{class_name.title()}_LWRank": X2WOTCItemData(
-        display_name = PROMOTION_ITEM_PREFIX + "LW " + class_name,
-        id = get_new_item_id(),
-        classification = IC.progression,
-        type = "Promotion",
-        tags = {f"{class_name.lower()}"},
-        power = 15.0,
-    )
-    for class_name in [
-        "Skirmisher",
-        "Reaper",
-        "Templar",
-        "SPARK",
-    ]
-}
-
 items: dict[str, X2WOTCItemData] = {
     **lwotc_techs,
+    **lwotc_promotion_items,
     **lwotc_pcs_items,
     **lwotc_weapon_mod_items,
-    **lwotc_native_promotion_items,
-    **lwotc_modified_promotion_items,
 }
