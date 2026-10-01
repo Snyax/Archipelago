@@ -1,14 +1,14 @@
 from aiohttp import web
 import asyncio
+import time
 from typing import TYPE_CHECKING
+import urllib.parse
 
 from CommonClient import NetworkItem, NetworkSlot, logger
 from NetUtils import ClientStatus
 
 if TYPE_CHECKING:
     from .Client import X2WOTCContext
-from .Items import item_table, item_id_to_key
-from .Locations import location_table, loc_id_to_key
 
 from .mods import mods_data
 
@@ -68,7 +68,7 @@ async def scout_loop():
             await ctx.connected.wait()
 
             for loc_id in ctx.server_locations:  # If the server knows the location
-                if loc_id in loc_id_to_key.keys():  # If it's ours
+                if loc_id in ctx.loc_manager.loc_id_to_key.keys():  # If it's ours
                     ctx.locations_scouted.add(loc_id)  # Scout it
 
             if ctx.locations_scouted:
@@ -79,7 +79,7 @@ async def scout_loop():
 
             await ctx.scouted.wait()
             ctx.fill_spoiler([{
-                "location": loc_id_to_key[loc_id],
+                "location": ctx.loc_manager.loc_id_to_key[loc_id],
                 "item": ctx.item_names.lookup_in_slot(item.item, item.player),
                 "player": ctx.slot_info[item.player].name,
                 "game": ctx.slot_info[item.player].game,
@@ -95,7 +95,7 @@ def get_locations_info(checks: list[str]) -> LocationsInfo:
     locations_info: LocationsInfo = {}
     for loc_name in checks:
         try:
-            loc_data = location_table[loc_name]
+            loc_data = ctx.loc_manager.location_table[loc_name]
             loc_id = loc_data.id
         except KeyError:
             logger.warning(f"Proxy: Location {loc_name} not found")
@@ -133,7 +133,7 @@ def get_locations_info(checks: list[str]) -> LocationsInfo:
 async def send_checks(checks: list[str], connected: bool = True):
     for loc_name in checks:
         try:
-            loc_id = location_table[loc_name].id
+            loc_id = ctx.loc_manager.location_table[loc_name].id
         except KeyError:
             logger.warning(f"Proxy: Location {loc_name} not found")
             continue
@@ -169,8 +169,8 @@ def get_received_items(layer: str, number_received: int) -> ItemsInfo:
     number = 0  # Number in sequence of received items (from 1)
 
     for network_item in ctx.items_received:
-        item_name = item_id_to_key[network_item.item]
-        item_data = item_table[item_name]
+        item_name = ctx.item_manager.item_id_to_key[network_item.item]
+        item_data = ctx.item_manager.item_table[item_name]
 
         # Track progressive items
         stages = item_data.stages
@@ -230,7 +230,7 @@ async def handle_check(request: web.Request):
         # For disabled locations, item_name is the internal key
         elif network_item is None:
             logger.debug(f"Proxy: Location {loc_name} disabled, regular item found")
-            item_data = item_table[item_name]
+            item_data = ctx.item_manager.item_table[item_name]
             response_body += f"[{item_data.type}]{mod_item_map(item_name)}\n"
             response_body += f"Regular Item Found\n"
             response_body += f"Found your {item_data.display_name}!"
@@ -258,9 +258,9 @@ async def handle_hint(request: web.Request):
     await ctx.send_msgs([{
         "cmd": "LocationScouts",
         "locations": [
-            location_table[hint].id
+            ctx.loc_manager.location_table[hint].id
             for hint in hints
-            if hint in location_table
+            if hint in ctx.loc_manager.location_table
         ],
         "create_as_hint": 2
     }])
@@ -276,7 +276,7 @@ def handle_tick(layer: str, number_received: int) -> str:
     for (item_name, network_item, slot_info) in get_received_items(layer, number_received):
         response_body += "\n\n"
 
-        item_data = item_table[item_name]
+        item_data = ctx.item_manager.item_table[item_name]
 
         # Info for the game to process
         if item_data.stages is None:
@@ -310,6 +310,28 @@ async def handle_tick_tactical(request: web.Request):
     response_body = handle_tick("Tactical", number_received)
     return web.Response(text=response_body)
 
+# --------------------------------------------------- DEATHLINK ------------------------------------------------------ #
+
+async def handle_death(request: web.Request):
+    if time.time() - ctx.last_death_link > 2.0:
+        await ctx.send_death(urllib.parse.unquote(request.match_info["tail"]))
+    return web.Response()
+
+async def handle_death_tick(request: web.Request):
+    try:
+        async with asyncio.timeout(2.0):
+            await ctx.update_death_link(request.match_info["tail"] == "True")
+            await ctx.deathlink_received.wait()
+    except TimeoutError:
+        pass
+
+    if ctx.deathlink_received.is_set():
+        ctx.deathlink_received.clear()
+        if time.time() - ctx.last_death_link < 2.0:
+            return web.Response(text=ctx.deathlink_text)
+
+    return web.Response()
+
 #======================================================================================================================#
 #                                                     RUN PROXY                                                        #
 #----------------------------------------------------------------------------------------------------------------------#
@@ -323,6 +345,8 @@ async def run_proxy(local_ctx: "X2WOTCContext"):
     app.router.add_get("/Tick/Tactical/{tail:[0-9]+}", handle_tick_tactical)
     app.router.add_get("/Check/{tail:.*}", handle_check)
     app.router.add_get("/Hint/{tail:.*}", handle_hint)
+    app.router.add_get("/Death/{tail:.*}", handle_death)
+    app.router.add_get("/DeathTick/{tail:True|False}", handle_death_tick)
 
     runner = web.AppRunner(app)
     await runner.setup()

@@ -1,5 +1,5 @@
 import dataclasses
-from logging import info, warning
+from logging import info
 from typing import Any, ClassVar, TextIO
 
 from BaseClasses import CollectionState, Item, MultiWorld, Tutorial
@@ -39,7 +39,7 @@ class X2WOTCWeb(WebWorld):
     option_groups = x2wotc_option_groups
     tutorials = [Tutorial(
         "Multiworld Setup Guide",
-        "A guide to setting up the XCOM 2: War of the Chosen Archipelago mod.",
+        "A guide to setting up the XCOM 2 War of the Chosen Archipelago mod.",
         "English",
         "setup_en.md",
         "setup/en",
@@ -78,7 +78,7 @@ class X2WOTCWorld(World):
         super().__init__(multiworld, player)
         self.enemy_rando_manager: EnemyRandoManager = EnemyRandoManager()
         self.item_manager: ItemManager = ItemManager()
-        self.loc_manager: LocationManager = LocationManager(self)  # Location manager requires enemy rando manager
+        self.loc_manager: LocationManager = LocationManager(self.enemy_rando_manager)
         self.rule_manager: RuleManager = None  # Rule manager is initialized in generate_early
         self.reg_manager: RegionManager = None  # Region manager requires rule manager
 
@@ -88,13 +88,21 @@ class X2WOTCWorld(World):
         # Extract slot data for UT re-gen
         re_gen_passthrough = getattr(self.multiworld, "re_gen_passthrough", {})
         if re_gen_passthrough and self.game in re_gen_passthrough:
-            slot_data = re_gen_passthrough[self.game]
+            slot_data: dict[str, Any] = re_gen_passthrough[self.game]
             for option_name in self.option_names:
                 if option_name in slot_data:
                     getattr(self.options, option_name).value = slot_data[option_name]
 
             # Enemy rando
             self.enemy_rando_manager.set_enemy_shuffle(slot_data["enemy_shuffle"])
+
+            # Replaced item/location data
+            replaced_item_data: dict[str, Any] = slot_data.get("replaced_item_data", {})
+            for item_name, kwargs in replaced_item_data.items():
+                self.item_manager.replace(item_name, **kwargs)
+            replaced_loc_data: dict[str, Any] = slot_data.get("replaced_loc_data", {})
+            for loc_name, kwargs in replaced_loc_data.items():
+                self.loc_manager.replace(loc_name, **kwargs)
 
         # Disable inactive mods
         for mod_data in mods_data:
@@ -103,6 +111,11 @@ class X2WOTCWorld(World):
                     self.loc_manager.disable_location(loc_name)
                 for item_name, item_data in mod_data.items.items():
                     self.item_manager.disable_item(item_name)
+
+        # Disable inactive traps
+        for value, item in self.options.active_traps.value_to_item.items():
+            if value not in self.options.active_traps:
+                self.item_manager.trap_items.discard(item)
 
         # Disable contact techs
         # This always happens for now, while I haven't committed to MCO-ing XComHQ
@@ -142,43 +155,38 @@ class X2WOTCWorld(World):
                     self.item_manager.disable_item(item_name)
 
         # Enable progressive tech items
-        if "RifleTech+" in self.options.progressive_items:
-            if not self.item_manager.enable_progressive_item("ProgressiveRifleTechCompleted+"):
-                warning(f"X2WOTC: Failed to enable progressive rifle tech+ for player {self.player_name}")
-        elif "RifleTech" in self.options.progressive_items:
-            if not self.item_manager.enable_progressive_item("ProgressiveRifleTechCompleted"):
-                warning(f"X2WOTC: Failed to enable progressive rifle tech for player {self.player_name}")
+        if "GunTech+" in self.options.progressive_items:
+            if self.options.split_progressive_items == "none":
+                self.item_manager.enable_progressive_item("ProgressiveGunTechCompleted+", random=self.random)
+            elif self.options.split_progressive_items == "vanilla":
+                self.item_manager.enable_progressive_item("ProgressiveRifleShotgunTechCompleted+", random=self.random)
+                self.item_manager.enable_progressive_item("ProgressiveCannonSniperTechCompleted", random=self.random)
+        elif "GunTech" in self.options.progressive_items:
+            if self.options.split_progressive_items == "none":
+                self.item_manager.enable_progressive_item("ProgressiveGunTechCompleted", random=self.random)
+            elif self.options.split_progressive_items == "vanilla":
+                self.item_manager.enable_progressive_item("ProgressiveRifleShotgunTechCompleted", random=self.random)
+                self.item_manager.enable_progressive_item("ProgressiveCannonSniperTechCompleted", random=self.random)
         if "ArmorTech+" in self.options.progressive_items:
-            if not self.item_manager.enable_progressive_item("ProgressiveArmorTechCompleted+"):
-                warning(f"X2WOTC: Failed to enable progressive armor tech+ for player {self.player_name}")
+            self.item_manager.enable_progressive_item("ProgressiveArmorTechCompleted+")
         elif "ArmorTech" in self.options.progressive_items:
-            if not self.item_manager.enable_progressive_item("ProgressiveArmorTechCompleted"):
-                warning(f"X2WOTC: Failed to enable progressive armor tech for player {self.player_name}")
-        if "MeleeWeaponTech" in self.options.progressive_items:
-            if not self.item_manager.enable_progressive_item("ProgressiveMeleeTechCompleted"):
-                warning(f"X2WOTC: Failed to enable progressive melee tech for player {self.player_name}")
+            self.item_manager.enable_progressive_item("ProgressiveArmorTechCompleted")
+        if "SwordTech" in self.options.progressive_items:
+            self.item_manager.enable_progressive_item("ProgressiveSwordTechCompleted")
         if "GREMLINTech" in self.options.progressive_items:
-            if not self.item_manager.enable_progressive_item("ProgressiveGREMLINTechCompleted"):
-                warning(f"X2WOTC: Failed to enable progressive GREMLIN tech for player {self.player_name}")
+            self.item_manager.enable_progressive_item("ProgressiveGREMLINTechCompleted")
         if "PsionicsTech" in self.options.progressive_items:
-            if not self.item_manager.enable_progressive_item("ProgressivePsionicsTechCompleted"):
-                warning(f"X2WOTC: Failed to enable progressive psionics tech for player {self.player_name}")
+            self.item_manager.enable_progressive_item("ProgressivePsionicsTechCompleted")
 
         # Enable tech fragment items
         if self.options.chosen_weapon_fragments == "two":
-            if not self.item_manager.enable_progressive_item("ChosenAssassinWeaponsFragment2"):
-                warning(f"X2WOTC: Failed to enable Assassin weapon fragments (2) for player {self.player_name}")
-            if not self.item_manager.enable_progressive_item("ChosenHunterWeaponsFragment2"):
-                warning(f"X2WOTC: Failed to enable Hunter weapon fragments (2) for player {self.player_name}")
-            if not self.item_manager.enable_progressive_item("ChosenWarlockWeaponsFragment2"):
-                warning(f"X2WOTC: Failed to enable Warlock weapon fragments (2) for player {self.player_name}")
+            self.item_manager.enable_progressive_item("ChosenAssassinWeaponsFragment2")
+            self.item_manager.enable_progressive_item("ChosenHunterWeaponsFragment2")
+            self.item_manager.enable_progressive_item("ChosenWarlockWeaponsFragment2")
         elif self.options.chosen_weapon_fragments == "three":
-            if not self.item_manager.enable_progressive_item("ChosenAssassinWeaponsFragment3"):
-                warning(f"X2WOTC: Failed to enable Assassin weapon fragments (3) for player {self.player_name}")
-            if not self.item_manager.enable_progressive_item("ChosenHunterWeaponsFragment3"):
-                warning(f"X2WOTC: Failed to enable Hunter weapon fragments (3) for player {self.player_name}")
-            if not self.item_manager.enable_progressive_item("ChosenWarlockWeaponsFragment3"):
-                warning(f"X2WOTC: Failed to enable Warlock weapon fragments (3) for player {self.player_name}")
+            self.item_manager.enable_progressive_item("ChosenAssassinWeaponsFragment3")
+            self.item_manager.enable_progressive_item("ChosenHunterWeaponsFragment3")
+            self.item_manager.enable_progressive_item("ChosenWarlockWeaponsFragment3")
 
         # Force early proving ground
         if self.options.early_proving_ground:
@@ -377,6 +385,11 @@ class X2WOTCWorld(World):
                 for item_name, item_data in self.item_manager.item_table.items()
                 if item_data.stages is not None and self.item_manager.item_count[item_name] > 0
             ],
+            "replaced_item_data": {
+                item_name: {"stages": kwargs["stages"]}  # Only store shuffled item stages in slot data
+                for item_name, kwargs in self.item_manager.replaced.items()
+                if "stages" in kwargs and self.item_manager.item_count[item_name] > 0
+            },
         }
 
         slot_data |= self.options.as_dict(*self.option_names, toggles_as_bools=True)
@@ -404,8 +417,25 @@ class X2WOTCWorld(World):
                 hint_data[self.player][loc_data.id] = ", ".join(placement_enemies)
 
     def write_spoiler(self, spoiler_handle: TextIO):
+        # Shuffled progressive items
+        shuffled_item_stages = {
+            item_name: kwargs["stages"]
+            for item_name, kwargs in self.item_manager.replaced.items()
+            if "stages" in kwargs and self.item_manager.item_count[item_name] > 0
+        }
+        if shuffled_item_stages:
+            spoiler_handle.write(f"\n\n=== Shuffled progressive items for player {self.player_name} ===\n")
+            for item_name, stages in shuffled_item_stages.items():
+                spoiler_handle.write(f"{self.item_manager.item_table[item_name].display_name}\n")
+                for stage in stages:
+                    stage_name = "Nothing"
+                    if stage in self.item_manager.item_table:
+                        stage_name = self.item_manager.item_table[stage].display_name
+                    spoiler_handle.write(f"- {stage_name}\n")
+
+        # Enemy rando
         if self.options.enemy_rando:
-            spoiler_handle.write(f"\n\n=== Enemy Rando for player {self.player_name} ===\n")
+            spoiler_handle.write(f"\n\n=== Enemy rando for player {self.player_name} ===\n")
             for placement_index, placed_index in enumerate(self.enemy_rando_manager.enemy_shuffle):
                 spoiler_handle.write(
                     f"{self.enemy_rando_manager.enemy_names[placement_index]} <- "

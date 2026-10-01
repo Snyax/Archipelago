@@ -9,6 +9,7 @@ ITEM_USE_LOCATION_PREFIX = "Use "
 SOLDIER_RANK_LOCATION_PREFIX = "Promote "
 SOLDIER_RANK_LOCATION_INFIX = " to "
 COVERT_ACTION_LOCATION_PREFIX = "Complete "
+
 DEFAULT_RANK_NAMES = [
     "Rookie",
     "Squaddie",
@@ -19,6 +20,26 @@ DEFAULT_RANK_NAMES = [
     "Major",
     "Colonel",
     "Brigadier",
+]
+PSI_RANK_NAMES = [
+    "Rookie",
+    "Initiate",
+    "Acolyte",
+    "Adept",
+    "Disciple",
+    "Mystic",
+    "Warlock",
+    "Magus",
+]
+SPARK_RANK_NAMES = [
+    "Rookie",
+    "Squire",
+    "Aspirant",
+    "Knight",
+    "Cavalier",
+    "Vanguard",
+    "Paladin",
+    "Champion",
 ]
 
 
@@ -964,14 +985,14 @@ wotc_item_uses: dict[str, X2WOTCLocationData] = {
 ##                                           SOLDIER RANK LOCATIONS                                                   ##
 ########################################################################################################################
 
-human_soldier_ranks: dict[str, X2WOTCLocationData] = {
-    f"{soldier_class.title()}Rank{rank}": X2WOTCLocationData(
+default_soldier_ranks: dict[str, X2WOTCLocationData] = {
+    f"{soldier_class}Rank{rank}": X2WOTCLocationData(
         display_name = SOLDIER_RANK_LOCATION_PREFIX + soldier_class + SOLDIER_RANK_LOCATION_INFIX + rank_name,
         id = get_new_location_id(),
         type = "SoldierRank",
-        tags = {soldier_class.lower(), f"item:{soldier_class.title()}Rank:{rank - 1}"},
+        tags = {soldier_class.lower(), f"item:{soldier_class}Rank:{rank - 1}"},
         dlc = dlc,
-        normal_item = f"{soldier_class.title()}Rank"
+        normal_item = f"{soldier_class}Rank"
     )
     for (soldier_class, dlc) in [
         ("Ranger", None),
@@ -982,7 +1003,7 @@ human_soldier_ranks: dict[str, X2WOTCLocationData] = {
         ("Skirmisher", "WOTC"),
         ("Templar", "WOTC"),
     ]
-    for (rank, rank_name) in zip(range(2, 8), DEFAULT_RANK_NAMES)
+    for (rank, rank_name) in list(enumerate(DEFAULT_RANK_NAMES))[2:8]
 }
 
 spark_soldier_ranks: dict[str, X2WOTCLocationData] = {
@@ -995,14 +1016,7 @@ spark_soldier_ranks: dict[str, X2WOTCLocationData] = {
         difficulty = 40.0,  # 100 supplies, 2 cores, 20 alloys, 15 elerium (1 PG project)
         normal_item = "SparkRank"
     )
-    for (rank, rank_name) in [
-        (2, "Aspirant"),
-        (3, "Knight"),
-        (4, "Cavalier"),
-        (5, "Vanguard"),
-        (6, "Paladin"),
-        (7, "Champion"),
-    ]
+    for (rank, rank_name) in list(enumerate(SPARK_RANK_NAMES))[2:8]
 }
 
 ########################################################################################################################
@@ -1148,7 +1162,7 @@ item_use_location_table: dict[str, X2WOTCLocationData] = {
 }
 
 soldier_rank_location_table: dict[str, X2WOTCLocationData] = {
-    **human_soldier_ranks,
+    **default_soldier_ranks,
     **spark_soldier_ranks,
 }
 

@@ -1,14 +1,13 @@
 import asyncio
 import os
 import re
-from typing import Any, TYPE_CHECKING
-import zipfile
+from typing import TYPE_CHECKING, Any
 
 from CommonClient import gui_enabled, logger
 from CommonClient import get_base_parser, handle_url_arg, server_loop
 from MultiServer import mark_raw
 from settings import Settings, get_settings
-from Utils import async_start, get_intended_text, open_filename, tuplize_version
+from Utils import async_start, get_intended_text, tuplize_version
 
 # Import Context and CommandProcessor from CommonClient when TrackerClient is not available, or for type checking
 try:
@@ -20,7 +19,8 @@ if TYPE_CHECKING:
     from CommonClient import CommonContext, ClientCommandProcessor
 
 from .EnemyRando import EnemyRandoManager
-from .Items import item_table, item_display_name_to_key
+from .Items import ItemManager
+from .Locations import LocationManager
 from .Options import HintResearchProjects, RankSanity
 from .Proxy import run_proxy
 from .Settings import X2WOTCSettings
@@ -148,78 +148,47 @@ class X2WOTCCommandProcessor(ClientCommandProcessor):
 
         return True
 
-    def _cmd_install_mod(self) -> bool:
-        """Install an APWorld mod"""
-        mod_path = open_filename("Select mod file", [("x2wotc mod", [".py", ".zip"])])
-        if not mod_path:
-            self.output("No file selected.")
-            return False
-
-        apworld_path = f"{__file__.split(".apworld")[0]}.apworld"
-        arcname = f"x2wotc/mods/{os.path.basename(mod_path)}"
-        with zipfile.ZipFile(apworld_path, "a") as apworld_file:
-
-            # If the mod is a .py file, add it directly to the archive
-            if mod_path.endswith(".py"):
-                apworld_file.write(mod_path, arcname=arcname)
-
-            # If the mod is a .zip file, extract its contents and add them to the archive
-            if mod_path.endswith(".zip"):
-                with zipfile.ZipFile(mod_path, "r") as mod_zip_file:
-                    for file_name in mod_zip_file.namelist():
-                        arcname = f"x2wotc/mods/{file_name}"
-                        with mod_zip_file.open(file_name) as file:
-                            apworld_file.writestr(arcname, file.read())
-
-        self.output("Mod installed. Please restart the client.")
-        return True
-
-    def _cmd_clear_mods(self) -> bool:
-        """Uninstall all APWorld mods"""
-        apworld_path = f"{__file__.split(".apworld")[0]}.apworld"
-        temp_path = f"{apworld_path}.tmp"
-
-        with zipfile.ZipFile(apworld_path, "r") as apworld_file:
-            with zipfile.ZipFile(temp_path, "w") as temp_file:
-                for file_name in apworld_file.namelist():
-                    if not file_name.startswith("x2wotc/mods/") or file_name == "x2wotc/mods/__init__.py":
-                        with apworld_file.open(file_name) as file:
-                            temp_file.writestr(file_name, file.read())
-        os.replace(temp_path, apworld_path)
-
-        self.output("All mods uninstalled. Please restart the client.")
-        return True
-
     @mark_raw
-    def _cmd_stages(self, progressive_item: str = "") -> bool:
-        """Print progressive item stages"""
+    def _cmd_progressive(self, progressive_item: str = "") -> bool:
+        """Print progressive item info"""
         progressive_items = [
             item_data.display_name
-            for item_data in item_table.values()
+            for item_data in self.ctx.item_manager.item_table.values()
             if item_data.stages is not None
         ]
 
         if progressive_item == "":
-            self.output("All progressive items:")
-            for item_name in progressive_items:
-                self.output(f"- {item_name}")
+            active_progressive_items = self.ctx.slot_data.get("active_progressive_items", None)
+            if active_progressive_items is not None:
+                if active_progressive_items:
+                    self.output("Active progressive items:")
+                    for item_key in active_progressive_items:
+                        self.output(f"- {self.ctx.item_manager.item_table[item_key].display_name}")
+                else:
+                    self.output("No active progressive items.")
+            else:
+                self.output("All progressive items:")
+                for item_name in progressive_items:
+                    self.output(f"- {item_name}")
             return True
 
         result, usable, response = get_intended_text(progressive_item, progressive_items)
         if not usable:
-            self.output(response)
             self.ctx.ui.last_autofillable_command = "/stages"
+            self.output(response)
             return False
 
-        item_key = item_display_name_to_key[result]
-        stages = item_table[item_key].stages
+        item_key = self.ctx.item_manager.item_display_name_to_key[result]
+        stages = self.ctx.item_manager.item_table[item_key].stages
         if not stages:
             self.output(f"No stages for progressive item '{result}'.")
             return True
 
         self.output(f"Stages for progressive item '{result}':")
         for stage in stages:
-            stage_name = item_table[stage].display_name if stage in item_table else "Nothing"
+            stage_name = "Nothing"
+            if stage in self.ctx.item_manager.item_table:
+                stage_name = self.ctx.item_manager.item_table[stage].display_name
             self.output(f"- {stage_name}")
         return True
 
@@ -258,6 +227,9 @@ class X2WOTCContext(CommonContext):
     connected: DualEvent
     scouted: DualEvent
 
+    deathlink_received: DualEvent
+    deathlink_text: str | None
+
     proxy_port: int
     proxy_task: asyncio.Task | None
     proxy_started: DualEvent
@@ -266,6 +238,8 @@ class X2WOTCContext(CommonContext):
     active_mods: list[str]
 
     enemy_rando_manager: EnemyRandoManager
+    item_manager: ItemManager
+    loc_manager: LocationManager
 
     config_file: str | None
     spoiler_file: str | None
@@ -282,6 +256,9 @@ class X2WOTCContext(CommonContext):
         self.connected = self.DualEvent()
         self.scouted = self.DualEvent()
 
+        self.deathlink_received = self.DualEvent()
+        self.deathlink_text = None
+
         self.proxy_port = 0
         self.proxy_task = None
         self.proxy_started = self.DualEvent()
@@ -290,6 +267,8 @@ class X2WOTCContext(CommonContext):
         self.active_mods = []
 
         self.enemy_rando_manager = EnemyRandoManager()
+        self.item_manager = ItemManager()
+        self.loc_manager = LocationManager(self.enemy_rando_manager)
 
         self.config_file = None
         self.spoiler_file = None
@@ -319,15 +298,18 @@ class X2WOTCContext(CommonContext):
 
         if cmd == "Connected":
             self.slot_data = args["slot_data"]
-            if not self.validate_world_version():
+            if not self.validate_world_version() or not self.validate_mod_config_and_version():
                 async_start(self.disconnect())
                 return
 
             self.active_mods = sorted(self.slot_data.get("active_mods", []))
             self.enemy_rando_manager.set_enemy_shuffle(self.slot_data["enemy_shuffle"])
-            if not self.validate_mod_config_and_version():
-                async_start(self.disconnect())
-                return
+            replaced_item_data: dict[str, Any] = self.slot_data.get("replaced_item_data", {})
+            for item_name, kwargs in replaced_item_data.items():
+                self.item_manager.replace(item_name, **kwargs)
+            replaced_loc_data: dict[str, Any] = self.slot_data.get("replaced_loc_data", {})
+            for loc_name, kwargs in replaced_loc_data.items():
+                self.loc_manager.replace(loc_name, **kwargs)
 
             self.connected.set()
             self.patch_config()
@@ -349,11 +331,11 @@ class X2WOTCContext(CommonContext):
                     return
 
                 item_name = text.split('"', 1)[1]
-                item_key = item_display_name_to_key[item_name]
+                item_key = self.item_manager.item_display_name_to_key[item_name]
                 active_progressive_items = self.slot_data.get("active_progressive_items", [])
                 progressive_item_names = [
                     item_data.display_name
-                    for item_name, item_data in item_table.items()
+                    for item_name, item_data in self.item_manager.item_table.items()
                     if item_data.stages is not None and item_key in item_data.stages
                         and item_name in active_progressive_items
                 ]
@@ -474,6 +456,13 @@ class X2WOTCContext(CommonContext):
 
         return True
 
+    def on_deathlink(self, data: dict[str, Any]):
+        super().on_deathlink(data)
+        self.deathlink_text = data.get("cause", None)
+        if not self.deathlink_text:
+            self.deathlink_text = f"Received from {data["source"]}"
+        self.deathlink_received.set()
+
     def make_gui(self):
         ui = super().make_gui()
         ui.base_title = CLIENT_NAME
@@ -576,12 +565,14 @@ class X2WOTCContext(CommonContext):
                 "DEF_SKIP_RAID_REWARD_MULT_ERR": str(float(self.slot_data.get("supply_raid_reward_error", 0)) / 100.0),
                 "DEF_EXTRA_XP_MULT": str(float(self.slot_data.get("extra_xp_gain", 0)) / 100.0),
                 "DEF_EXTRA_CORPSES": str(self.slot_data.get("extra_corpse_gain", 0)),
+                "DEF_DEATHLINK": str(self.slot_data.get("deathlink", False)),
+                "DEF_DEATHLINK_CHANCE": str(float(self.slot_data.get("deathlink_chance", 0)) / 100.0),
                 "DEF_INSTANT_ROOKIE_TRAINING": str(self.slot_data.get("instant_rookie_training", False)),
                 "DEF_INSTANT_SPARK_BUILDING": str(self.slot_data.get("instant_spark_construction", False)),
                 "DEF_REFUND_SPARK_COST": str(self.slot_data.get("refund_spark_costs", False)),
                 "DEF_REPLACE_FACTION_HERO": str(self.slot_data.get("replace_faction_heroes", False)),
-                "DEF_NO_STARTING_TRAPS": str(self.slot_data.get("disable_day_one_traps", False)),
-                "DEF_NO_STARTING_TRAPS_TACTICAL": str(self.slot_data.get("disable_turn_one_traps", False)),
+                "DEF_NO_DAY_ONE_TRAPS": str(self.slot_data.get("disable_day_one_traps", False)),
+                "DEF_NO_TURN_ONE_TRAPS": str(self.slot_data.get("disable_turn_one_traps", False)),
             }
 
         with open(self.config_file, "r") as file:

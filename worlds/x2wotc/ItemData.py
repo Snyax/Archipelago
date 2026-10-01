@@ -1,3 +1,4 @@
+from collections import Counter
 from typing import NamedTuple
 
 from BaseClasses import ItemClassification as IC
@@ -29,13 +30,20 @@ class X2WOTCItemData(NamedTuple):
                             # "WOTC": War of the Chosen
     normal_location: str | None = None
     stages: list[str | None] | None = None  # For progressive items
+    shuffle_stages: set[int] | None = None  # Shuffle stages at these indices
 
-    mutable_fields = {"classification", "tags", "power"}
+    mutable_fields = {"classification", "tags", "power", "stages"}
 
     def replace(self, **kwargs) -> "X2WOTCItemData":
         immutable_fields = set(self._fields) & set(kwargs.keys()) - self.mutable_fields
         if immutable_fields:
             raise ValueError(f"Cannot replace immutable fields {immutable_fields}.")
+
+        # Validate stages
+        if "stages" in kwargs:
+            if not self.stages or Counter(kwargs["stages"]) != Counter(self.stages):
+                raise ValueError(f"Invalid replacement item stages: {self.stages} -> {kwargs["stages"]}.")
+
         return self._replace(**kwargs)
 
 
@@ -542,8 +550,41 @@ wotc_chosen_weapon_tech_items: dict[str, X2WOTCItemData] = {
 #-----------------------------------------------------------------------------------------------------------------------
 
 progressive_tech_items: dict[str, X2WOTCItemData] = {
-    "ProgressiveRifleTechCompleted": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Rifle",
+    "ProgressiveGunTechCompleted": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive Gun",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"weapon", "progressive"},
+        stages = [
+            "MagnetizedWeaponsCompleted",
+            "GaussWeaponsCompleted",
+            "PlasmaRifleCompleted",
+            "AlloyCannonCompleted",
+            "HeavyPlasmaCompleted",
+            "PlasmaSniperCompleted",
+        ],
+        shuffle_stages = {3, 4, 5}
+    ),
+    "ProgressiveGunTechCompleted+": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive Gun+",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"weapon", "progressive"},
+        stages = [
+            "ModularWeaponsCompleted",
+            "MagnetizedWeaponsCompleted",
+            "GaussWeaponsCompleted",
+            "PlasmaRifleCompleted",
+            "AlloyCannonCompleted",
+            "HeavyPlasmaCompleted",
+            "PlasmaSniperCompleted",
+        ],
+        shuffle_stages = {4, 5, 6}
+    ),
+    "ProgressiveRifleShotgunTechCompleted": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive Rifle/Shotgun",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -551,10 +592,12 @@ progressive_tech_items: dict[str, X2WOTCItemData] = {
         stages = [
             "MagnetizedWeaponsCompleted",
             "PlasmaRifleCompleted",
-        ]
+            "AlloyCannonCompleted",
+        ],
+        shuffle_stages = {1, 2}
     ),
-    "ProgressiveRifleTechCompleted+": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Rifle+",
+    "ProgressiveRifleShotgunTechCompleted+": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive Rifle/Shotgun+",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -563,7 +606,22 @@ progressive_tech_items: dict[str, X2WOTCItemData] = {
             "ModularWeaponsCompleted",
             "MagnetizedWeaponsCompleted",
             "PlasmaRifleCompleted",
-        ]
+            "AlloyCannonCompleted",
+        ],
+        shuffle_stages = {2, 3}
+    ),
+    "ProgressiveCannonSniperTechCompleted": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive Cannon/Sniper",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"weapon", "progressive"},
+        stages = [
+            "GaussWeaponsCompleted",
+            "HeavyPlasmaCompleted",
+            "PlasmaSniperCompleted",
+        ],
+        shuffle_stages = {1, 2}
     ),
     "ProgressiveArmorTechCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive Armor",
@@ -588,8 +646,8 @@ progressive_tech_items: dict[str, X2WOTCItemData] = {
             "PoweredArmorCompleted",
         ]
     ),
-    "ProgressiveMeleeTechCompleted": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Progressive Melee Weapon",
+    "ProgressiveSwordTechCompleted": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive Sword",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",
@@ -1230,23 +1288,70 @@ engineer_items: dict[str, X2WOTCItemData] = {
 ##                                                TRAP ITEMS                                                          ##
 ########################################################################################################################
 
-doom_items: dict[str, X2WOTCItemData] = {
+strategy_trap_items: dict[str, X2WOTCItemData] = {
     "Doom:1": X2WOTCItemData(
-        display_name = TRAP_ITEM_PREFIX + "Avatar Project +1",
+        display_name = TRAP_ITEM_PREFIX + "Avatar Project",
         id = get_new_item_id(),
         classification = IC.trap,
         type = "Trap",
-        tags = {"doom"}
+        tags = {}
+    ),
+    "HideBlackMarket:3": X2WOTCItemData(
+        display_name = TRAP_ITEM_PREFIX + "Market Gap",
+        id = get_new_item_id(),
+        classification = IC.trap,
+        type = "Trap",
+        tags = {}
+    ),
+    "YapCentral:7": X2WOTCItemData(
+        display_name = TRAP_ITEM_PREFIX + "Yap Central",
+        id = get_new_item_id(),
+        classification = IC.trap,
+        type = "Trap",
+        tags = {}
     ),
 }
 
-force_level_items: dict[str, X2WOTCItemData] = {
-    "ForceLevel:1": X2WOTCItemData(
-        display_name = TRAP_ITEM_PREFIX + "Force Level +1",
+tactical_trap_items: dict[str, X2WOTCItemData] = {
+    "AdventReinforcement": X2WOTCItemData(
+        display_name = TRAP_ITEM_PREFIX + "ADVENT Reinforcements",
         id = get_new_item_id(),
         classification = IC.trap,
+        layer = "Tactical",
         type = "Trap",
-        tags = {"force_level"}
+        tags = {"reinforcements"}
+    ),
+    "AlienReinforcement": X2WOTCItemData(
+        display_name = TRAP_ITEM_PREFIX + "Alien Reinforcements",
+        id = get_new_item_id(),
+        classification = IC.trap,
+        layer = "Tactical",
+        type = "Trap",
+        tags = {"reinforcements"}
+    ),
+    "NoAmmo": X2WOTCItemData(
+        display_name = TRAP_ITEM_PREFIX + "Out of Ammo",
+        id = get_new_item_id(),
+        classification = IC.trap,
+        layer = "Tactical",
+        type = "Trap",
+        tags = {}
+    ),
+    "MassPanic": X2WOTCItemData(
+        display_name = TRAP_ITEM_PREFIX + "Mass Panic",
+        id = get_new_item_id(),
+        classification = IC.trap,
+        layer = "Tactical",
+        type = "Trap",
+        tags = {}
+    ),
+    "Earthquake": X2WOTCItemData(
+        display_name = TRAP_ITEM_PREFIX + "Earthquake",
+        id = get_new_item_id(),
+        classification = IC.trap,
+        layer = "Tactical",
+        type = "Trap",
+        tags = {}
     ),
 }
 
@@ -1345,8 +1450,8 @@ filler_item_table: dict[str, X2WOTCItemData] = {
 }
 
 trap_item_table: dict[str, X2WOTCItemData] = {
-    **doom_items,
-    **force_level_items,
+    **strategy_trap_items,
+    **tactical_trap_items,
 }
 
 item_table: dict[str, X2WOTCItemData] = {
