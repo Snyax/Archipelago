@@ -46,7 +46,7 @@ class Goal(Choice):
     chosen_stronghold_3:    Beat all three Chosen Stronghold Assault missions.
 
     alien_fortress and network_tower (without extra considerations) are only recommended for async settings.
-    For sync settings, maybe try chosen_stronghold_1 first and experiment from there."""
+    For sync settings, try chosen_stronghold_1 or chosen_stronghold_2 first and experiment from there."""
     display_name = "Goal"
     option_alien_fortress = 0
     option_network_tower = 1
