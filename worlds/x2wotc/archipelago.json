@@ -1,7 +1,7 @@
 {
     "game": "XCOM 2 War of the Chosen",
     "authors": ["Snyax", "copyrite"],
-    "world_version": "0.10.10",
+    "world_version": "1.0.0",
     "minimum_ap_version": "0.6.4",
     "igdb_id": 37060,
     "license": "MIT",
