@@ -12,4 +12,4 @@
 
 ## Why To
 
-Steam Workshop does not support reverting to previous versions of mods. When a new mod update is published which breaks compatibility with an older version of the apworld, you might therefore need to install the correct mod version manually to continue playing on an existing multiworld.
+Steam Workshop does not support reverting to previous versions of mods. When a new mod update is published which breaks compatibility with an older version of the APWorld, you might therefore need to install the correct mod version manually to continue playing in an existing multiworld.
