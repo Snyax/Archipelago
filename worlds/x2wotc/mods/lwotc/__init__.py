@@ -490,4 +490,15 @@ config: dict[str, str] = {
         Ranks[0]=2, Ranks[1]=3, Ranks[2]=4, Ranks[3]=5, Ranks[4]=6, Ranks[5]=7, Ranks[6]=8)
         """
     ),
+    "WOTCArchipelago_APClient": dedent(
+        """
+        !AdventReinforcementEncounters=()
+        !AlienReinforcementEncounters=()
+        +AdventReinforcementEncounters=ADVx2_Standard_LW
+        +AdventReinforcementEncounters=ADVx3_Standard_LW
+        +AdventReinforcementEncounters=ADVx2_Strong_LW
+        +AlienReinforcementEncounters=ALNx2_APTrap_LW
+        +AlienReinforcementEncounters=ALNx3_APTrap_LW
+        """
+    )
 }
