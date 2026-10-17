@@ -492,14 +492,8 @@ config: dict[str, str] = {
     ),
     "WOTCArchipelago_APClient": dedent(
         """
-        -AdventReinforcementEncounters=ADVx2_Standard
-        -AdventReinforcementEncounters=ADVx3_Standard
-        -AdventReinforcementEncounters=ADVx1_Strong
-        -AdventReinforcementEncounters=ADVx2_Strong
-        -AlienReinforcementEncounters=ALNx2_Standard
-        -AlienReinforcementEncounters=ALNx3_Standard
-        -AlienReinforcementEncounters=ALNx1_Strong
-        -AlienReinforcementEncounters=ALNx2_Strong
+        !AdventReinforcementEncounters=()
+        !AlienReinforcementEncounters=()
         +AdventReinforcementEncounters=ADVx2_Standard_LW
         +AdventReinforcementEncounters=ADVx3_Standard_LW
         +AdventReinforcementEncounters=ADVx2_Strong_LW
