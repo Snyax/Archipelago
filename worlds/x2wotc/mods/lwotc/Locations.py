@@ -95,7 +95,7 @@ lwotc_techs: dict[str, X2WOTCLocationData] = {
         normal_item = "AdvancedLasersCompleted"
     ),
     "_GaussWeapons_LW": X2WOTCLocationData(
-        display_name = TECH_LOCATION_PREFIX + "Advanced Magnetic Weapons",
+        display_name = TECH_LOCATION_PREFIX + "Advanced Magnetic Weaponry",
         id = get_new_location_id(),
         layer = "Strategy",
         type = "Tech",
