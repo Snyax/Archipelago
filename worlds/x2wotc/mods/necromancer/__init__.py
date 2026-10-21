@@ -40,5 +40,5 @@ locations: dict[str, X2WOTCLocationData] = {
 }
 
 config: dict[str, str] = {
-    "WOTCArchipelago_Ranksanity": f'+RanksanityData=(ID="Necromancer", ClassName="Necromancer", {RANKS_STR})'
+    "WOTCArchipelago_Ranksanity": f'+RanksanityData=(ID="NecromancerClassWOTC", ClassName="NecromancerClassWOTC", {RANKS_STR})'
 }
