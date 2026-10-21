@@ -122,7 +122,7 @@ def generate_early(world: "X2WOTCWorld"):
             world.item_manager.item_table["AutopsyAdventTrooperCompleted"].display_name
         ] = 1
 
-    # Gauss Weapons is called Advanced Magnetic Weapons
+    # Gauss Weapons is called Advanced Magnetic Weaponry
     world.loc_manager.disable_location("GaussWeapons")
     world.item_manager.disable_item("GaussWeaponsCompleted")
 
