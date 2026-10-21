@@ -13,7 +13,7 @@ name = "Pharmacist Class"
 
 rule_priority = 0.0
 
-MAX_RANK = 7
+MAX_RANK = 8
 RANKS_STR = ", ".join(f"Ranks[{i-2}]={i}" for i in range(2, MAX_RANK+1))
 
 items: dict[str, X2WOTCItemData] = {
