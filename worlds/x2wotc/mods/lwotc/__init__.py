@@ -3,6 +3,7 @@ from textwrap import dedent
 from typing import TYPE_CHECKING
 
 from BaseClasses import ItemClassification as IC
+from Options import OptionError
 
 if TYPE_CHECKING:
     from worlds.x2wotc import X2WOTCWorld
@@ -60,10 +61,18 @@ item_map = {
 
 # For defining the order rules are applied in (in case of set_rule)
 # The order is lowest to highest priority
-rule_priority = 0.0
+rule_priority = 100.0
+
+INCOMPATIBLE_MODS: set[str] = {
+    "LW2 Classes and Perks",
+}
 
 # Handle mod options here
 def generate_early(world: "X2WOTCWorld"):
+    # Handle incompatible mods
+    found_bad_mods = set(world.options.active_mods) & INCOMPATIBLE_MODS
+    if found_bad_mods:
+        raise OptionError(f"Player {world.player_name} has enabled the mod {name} with the following incompatible mods: {', '.join(found_bad_mods)}")
 
     # Mission skips not supported
     if world.options.skip_mission_types:
