@@ -9,7 +9,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Proficiency Skirmisher"
+name = "[WOTC] Proficiency Class Plugin: Skirmisher"
 
 rule_priority = 0.0
 

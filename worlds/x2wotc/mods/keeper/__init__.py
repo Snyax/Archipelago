@@ -9,7 +9,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Rescue Denmother"
+name = "[WOTC] Rescue Denmother"
 
 rule_priority = 0.0
 

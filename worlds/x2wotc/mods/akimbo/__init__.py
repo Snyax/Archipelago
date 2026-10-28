@@ -9,7 +9,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Iridar's Akimbo Class"
+name = "[WOTC] Iridar's Akimbo Class"
 
 rule_priority = 0.0
 

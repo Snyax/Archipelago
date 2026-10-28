@@ -9,7 +9,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Proficiency Jane Kelly"
+name = "[WOTC] Proficiency Class Plugin: Jane Kelly"
 
 rule_priority = 0.0
 

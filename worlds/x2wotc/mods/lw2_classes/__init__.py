@@ -29,7 +29,7 @@ MAX_RANK = 8
 RANKS_STR = ", ".join(f"Ranks[{i-2}]={i}" for i in range(2, MAX_RANK+1))
 # Keys are internal names, values are localized names
 
-name = "LW2 Classes and Perks"
+name = "[WOTC] LW2 Classes and Perks"
 location_map = {
     f"LWOTC_{class_name}Rank{rank}": f"{class_name}Rank{rank}"
     for class_name in BASE_GAME_CLASS_NAMES

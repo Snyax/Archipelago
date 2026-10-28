@@ -9,7 +9,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Pharmacist Class"
+name = "[WOTC] Pharmacist Class"
 
 rule_priority = 0.0
 

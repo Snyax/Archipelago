@@ -15,7 +15,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Burner and Rocketeer Classes"
+name = "[WOTC] Burner and Rocketeer classes"
 
 rule_priority = 0.0
 

@@ -9,7 +9,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Vanguard Class"
+name = "[WOTC] Vanguard Class"
 
 rule_priority = 0.0
 

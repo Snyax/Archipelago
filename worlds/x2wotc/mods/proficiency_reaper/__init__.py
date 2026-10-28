@@ -9,7 +9,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Proficiency Reaper"
+name = "[WOTC] Proficiency Class Plugin: Reaper"
 
 rule_priority = 0.0
 

@@ -9,7 +9,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Shadow Ops Perk Pack"
+name = "[WOTC] Shadow Ops Perk Pack"
 
 rule_priority = 0.0
 
