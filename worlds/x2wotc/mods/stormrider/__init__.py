@@ -33,6 +33,7 @@ locations: dict[str, X2WOTCLocationData] = {
         id = get_new_location_id(),
         type = "SoldierRank",
         tags = {"stormrider", f"item:StormriderRank:{rank - 1}"},
+        difficulty = 25.0,  # Requires all other (GTS trainable) classes obtained first
         dlc = None,
         normal_item = "StormriderRank"
     )
