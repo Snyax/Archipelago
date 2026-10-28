@@ -1,5 +1,9 @@
 from textwrap import dedent
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from worlds.x2wotc import X2WOTCWorld
 from BaseClasses import ItemClassification as IC
 
 from worlds.x2wotc.ItemData import X2WOTCItemData, PROMOTION_ITEM_PREFIX, get_new_item_id
@@ -46,7 +50,16 @@ item_map = {
     "TechnicalRank": "LWOTC_TechnicalRank",
 }
 
-rule_priority = 0.0
+# If used alongside a mod that disables the 4 base game classes,
+# this must be greater than the other mod
+rule_priority = 1.0
+
+def generate_early(world: "X2WOTCWorld"):
+    # Base game GTS classes are disabled
+    for soldier_class in BASE_GAME_CLASS_NAMES:
+        for rank in range(2, 8):
+            if world.loc_manager.enable_location(f"{soldier_class.title()}Rank{rank}"):
+                world.item_manager.add_item(f"{soldier_class.title()}Rank")
 
 brigadier_locations: dict[str, X2WOTCLocationData] = {
     f"{class_name.title()}Rank8": X2WOTCLocationData(
