@@ -48,18 +48,6 @@ item_map = {
 
 rule_priority = 0.0
 
-items: dict[str, X2WOTCItemData] = {
-    f"{class_name.title()}Rank": X2WOTCItemData(
-        display_name = PROMOTION_ITEM_PREFIX + class_name,
-        id = get_new_item_id(),
-        classification = IC.progression,
-        type = "Promotion",
-        tags = {f"{class_name.lower().replace(" ", "_")}"},
-        power = 15.0,
-    )
-    for class_name in BASE_GAME_CLASS_NAMES + LW2_CLASS_NAMES
-}
-
 brigadier_locations: dict[str, X2WOTCLocationData] = {
     f"{class_name.title()}Rank8": X2WOTCLocationData(
         display_name = SOLDIER_RANK_LOCATION_PREFIX + class_name + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[8],
