@@ -62,19 +62,14 @@ item_map = {
 
 # For defining the order rules are applied in (in case of set_rule)
 # The order is lowest to highest priority
-rule_priority = 100.0
+rule_priority = 0.0
 
-INCOMPATIBLE_MODS: set[str] = {
+incompatible_mods: set[str] = {
     "[WOTC] LW2 Classes and Perks",
 }
 
 # Handle mod options here
 def generate_early(world: "X2WOTCWorld"):
-    # Handle incompatible mods
-    found_bad_mods = set(world.options.active_mods) & INCOMPATIBLE_MODS
-    if found_bad_mods:
-        raise OptionError(f"Player {world.player_name} has enabled the mod {name} with the following incompatible mods: {', '.join(found_bad_mods)}")
-
     # Mission skips not supported
     if world.options.skip_mission_types:
         world.options.skip_mission_types.value = set()
