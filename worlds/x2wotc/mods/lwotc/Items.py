@@ -30,7 +30,7 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
         normal_location = "AdvancedLasers"
     ),
     "_GaussWeaponsCompleted_LW": X2WOTCItemData(
-        display_name = TECH_ITEM_PREFIX + "Advanced Magnetic Weapons",
+        display_name = TECH_ITEM_PREFIX + "Advanced Magnetic Weaponry",
         id = get_new_item_id(),
         classification = IC.progression | IC.useful,
         type = "TechCompleted",

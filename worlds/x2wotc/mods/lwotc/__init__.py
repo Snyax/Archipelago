@@ -14,6 +14,7 @@ from .Rules import set_rules
 
 
 name = "Long War of the Chosen"
+id = 2683996590
 location_map = {
     "GaussWeapons": "_GaussWeapons_LW",
     "SkirmisherRank2": "_Skirmisher_LWRank2",
@@ -131,7 +132,7 @@ def generate_early(world: "X2WOTCWorld"):
             world.item_manager.item_table["AutopsyAdventTrooperCompleted"].display_name
         ] = 1
 
-    # Gauss Weapons is called Advanced Magnetic Weapons
+    # Gauss Weapons is called Advanced Magnetic Weaponry
     world.loc_manager.disable_location("GaussWeapons")
     world.item_manager.disable_item("GaussWeaponsCompleted")
 

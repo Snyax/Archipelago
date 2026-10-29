@@ -104,13 +104,26 @@ class X2WOTCWorld(World):
             for loc_name, kwargs in replaced_loc_data.items():
                 self.loc_manager.replace(loc_name, **kwargs)
 
-        # Disable inactive mods
+        # Disable inactive mods and check for mod conflicts
         for mod_data in mods_data:
             if mod_data.name not in self.options.active_mods:
                 for loc_name, loc_data in mod_data.locations.items():
                     self.loc_manager.disable_location(loc_name)
                 for item_name, item_data in mod_data.items.items():
                     self.item_manager.disable_item(item_name)
+            else:
+                active_incompatible_mods = [
+                    other_mod_data.name
+                    for other_mod_data in mods_data
+                    if (other_mod_data.name in self.options.active_mods
+                        and (other_mod_data.name in mod_data.incompatible_mods
+                             or other_mod_data.id in mod_data.incompatible_mods))
+                ]
+                if active_incompatible_mods:
+                    raise OptionError(
+                        f'X2WOTC: Player {self.player_name} has enabled the mod "{mod_data.name}" '
+                        f'with the following incompatible mods: "{", ".join(active_incompatible_mods)}"'
+                    )
 
         # Disable inactive traps
         for value, item in self.options.active_traps.value_to_item.items():

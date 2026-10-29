@@ -11,6 +11,7 @@ from worlds.x2wotc.LocationData import (
 
 # Steam workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=1160638944
 name = "Flame Viper - WotC"
+id = 1160638944
 
 items: dict[str, X2WOTCItemData] = {
     "Autopsy_AshFlameViperCompleted": X2WOTCItemData(

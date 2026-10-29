@@ -10,8 +10,10 @@ from .Rules import set_rules
 
 
 name = "Example Mod"
+id = 123456789  # Ideally Steam Workshop ID
 
 # For defining the order rules are applied in (in case of set_rule)
+# Also determines the order of generate_early function calls
 # The order is lowest to highest priority
 rule_priority = 0.0
 
