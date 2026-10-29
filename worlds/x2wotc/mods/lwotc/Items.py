@@ -38,6 +38,15 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
         power = 100.0,
         normal_location = "_GaussWeapons_LW"
     ),
+    "_PlatedArmorCompleted_LW": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Combat Armor",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"armor"},
+        power = 100.0,
+        normal_location = "_PlatedArmor_LW"
+    ),
     "CoilgunsCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Coilguns",
         id = get_new_item_id(),
@@ -147,7 +156,7 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
         type = "TechCompleted",
         tags = {"armor", "progressive"},
         stages = [
-            "PlatedArmorCompleted",
+            "_PlatedArmorCompleted_LW",
             "EXOSuitCompleted",
             "SpiderSuitCompleted",
             "PoweredArmorCompleted",
@@ -164,7 +173,7 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
         tags = {"armor", "progressive"},
         stages = [
             "HybridMaterialsCompleted",
-            "PlatedArmorCompleted",
+            "_PlatedArmorCompleted_LW",
             "EXOSuitCompleted",
             "SpiderSuitCompleted",
             "PoweredArmorCompleted",

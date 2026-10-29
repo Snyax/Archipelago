@@ -16,6 +16,7 @@ name = "Long War of the Chosen"
 id = 2683996590
 location_map = {
     "GaussWeapons": "_GaussWeapons_LW",
+    "PlatedArmor": "_PlatedArmor_LW",
     "SkirmisherRank2": "_Skirmisher_LWRank2",
     "SkirmisherRank3": "SkirmisherRank2",  # Corporal
     "SkirmisherRank4": "SkirmisherRank3",  # Sergeant
@@ -40,6 +41,7 @@ location_map = {
 }
 item_map = {
     "_GaussWeaponsCompleted_LW": "GaussWeaponsCompleted",
+    "_PlatedArmorCompleted_LW": "PlatedArmorCompleted",
     "_AimUpgrade_Sup_LW:1": "AimUpgrade_Sup:1",
     "_CritUpgrade_Sup_LW:1": "CritUpgrade_Sup:1",
     "_ReloadUpgrade_Sup_LW:1": "ReloadUpgrade_Sup:1",
@@ -138,6 +140,10 @@ def generate_early(world: "X2WOTCWorld"):
     world.loc_manager.disable_location("GaussWeapons")
     world.item_manager.disable_item("GaussWeaponsCompleted")
 
+    # Plated Armor is called Combat Armor
+    world.loc_manager.disable_location("PlatedArmor")
+    world.item_manager.disable_item("PlatedArmorCompleted")
+
     # Rocket Launcher is a squaddie Technical skill
     world.loc_manager.disable_location("UseRocketLauncher")
 
@@ -196,8 +202,7 @@ def generate_early(world: "X2WOTCWorld"):
         ("PlasmaSniper", {"tree:PlasmaRifle"}),
         ("HeavyPlasma", {"tree:PlasmaRifle"}),
         ("AlloyCannon", {"tree:PlasmaRifle"}),
-        ("PlatedArmor", {"tree:HybridMaterials"}),
-        ("PoweredArmor", {"tree:PlatedArmor", "tree:Tech_Elerium"}),
+        ("PoweredArmor", {"tree:_PlatedArmor_LW", "tree:Tech_Elerium"}),
         ("AutopsyAdventTrooper", {"autopsy", "tree:AlienBiotech", "goldenpath"}),  # Somewhat guaranteed
         ("AutopsyAdventOfficer", {"autopsy", "tree:AutopsyAdventTrooper", "goldenpath"}),  # Somewhat guaranteed
         ("AutopsyAdventStunLancer", {"autopsy", "tree:AutopsyAdventTrooper"}),
@@ -210,7 +215,7 @@ def generate_early(world: "X2WOTCWorld"):
         ("AutopsyViperKing", {"autopsy", "kill_ruler", "tree:AutopsyViper"}),
         ("AutopsyBerserkerQueen", {"autopsy", "kill_ruler", "tree:AutopsyBerserker"}),
         ("AutopsyArchonKing", {"autopsy", "kill_ruler", "tree:AutopsyArchon"}),
-        ("Tech_Elerium", {"tree:HybridMaterials", "tree:_GaussWeapons_LW", "tree:PlatedArmor"}),
+        ("Tech_Elerium", {"tree:HybridMaterials", "tree:_GaussWeapons_LW", "tree:_PlatedArmor_LW"}),
         ("UseBattleScanner", {"utility", "proving_ground", "item:HybridMaterialsCompleted"}),
         ("UseAlienGrenade", PG_GRENADE | {"item:AutopsyMutonCompleted"}),
         ("UseEMPGrenade", PG_GRENADE | {"item:AutopsyAdventMECCompleted"}),
@@ -237,7 +242,6 @@ def generate_early(world: "X2WOTCWorld"):
     for loc, diff in [
         ("Psionics", fl_to_diff(4)),
         ("MagnetizedWeapons", fl_to_diff(7)),
-        ("PlatedArmor", fl_to_diff(9)),
         ("Tech_Elerium", fl_to_diff(11)),
         ("PlasmaRifle", fl_to_diff(17)),
         ("PoweredArmor", fl_to_diff(17)),
