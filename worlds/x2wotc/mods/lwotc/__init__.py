@@ -110,9 +110,20 @@ def generate_early(world: "X2WOTCWorld"):
         world.item_manager.enable_progressive_item("ProgressivePsionicsTechLwotcCompleted")
 
     # Light and Heavy Armor are researches, not PG projects
-    if "ArmorTech" in world.options.progressive_items:
-        world.item_manager.enable_progressive_item("ProgressiveLightArmorTechLwotcCompleted")
-        world.item_manager.enable_progressive_item("ProgressiveHeavyArmorTechLwotcCompleted")
+    if "ArmorTech+" in world.options.progressive_items:
+        if world.options.split_progressive_items == "none":
+            world.item_manager.disable_progressive_item("ProgressiveArmorTechCompleted+")
+            world.item_manager.enable_progressive_item("ProgressiveArmorTechLwotcCompleted+", random=world.random)
+        elif world.options.split_progressive_items == "vanilla":
+            world.item_manager.enable_progressive_item("ProgressiveLightArmorTechLwotcCompleted")
+            world.item_manager.enable_progressive_item("ProgressiveHeavyArmorTechLwotcCompleted")
+    elif "ArmorTech" in world.options.progressive_items:
+        if world.options.split_progressive_items == "none":
+            world.item_manager.disable_progressive_item("ProgressiveArmorTechCompleted")
+            world.item_manager.enable_progressive_item("ProgressiveArmorTechLwotcCompleted", random=world.random)
+        elif world.options.split_progressive_items == "vanilla":
+            world.item_manager.enable_progressive_item("ProgressiveLightArmorTechLwotcCompleted")
+            world.item_manager.enable_progressive_item("ProgressiveHeavyArmorTechLwotcCompleted")
 
     # Handle option to force early proving ground
     if world.options.early_proving_ground:
