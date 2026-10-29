@@ -13,6 +13,7 @@ from worlds.x2wotc.LocationData import X2WOTCLocationData
 
 class X2WOTCModData(NamedTuple):
     name: str
+    id: int | None = None
     rule_priority: float = 0.0
     items: dict[str, X2WOTCItemData] = {}
     item_map: dict[str, str] = {}
@@ -45,6 +46,7 @@ for loader, module_name, ispkg in pkgutil.iter_modules(__path__):
 
     mods_data.append(X2WOTCModData(
         name = getattr(module, "name", module_name),
+        id = getattr(module, "id", None),
         rule_priority = getattr(module, "rule_priority", 0.0),
         items = getattr(module, "items", {}),
         item_map = getattr(module, "item_map", {}),

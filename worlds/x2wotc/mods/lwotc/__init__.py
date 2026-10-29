@@ -13,6 +13,7 @@ from .Rules import set_rules
 
 
 name = "Long War of the Chosen"
+id = 2683996590
 location_map = {
     "GaussWeapons": "_GaussWeapons_LW",
     "SkirmisherRank2": "_Skirmisher_LWRank2",
