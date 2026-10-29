@@ -3,7 +3,6 @@ from textwrap import dedent
 from typing import TYPE_CHECKING
 
 from BaseClasses import ItemClassification as IC
-from Options import OptionError
 
 if TYPE_CHECKING:
     from worlds.x2wotc import X2WOTCWorld
@@ -64,9 +63,9 @@ item_map = {
 # The order is lowest to highest priority
 rule_priority = 0.0
 
-incompatible_mods: set[str] = {
+incompatible_mods = [
     "[WOTC] LW2 Classes and Perks",
-}
+]
 
 # Handle mod options here
 def generate_early(world: "X2WOTCWorld"):
