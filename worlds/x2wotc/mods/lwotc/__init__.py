@@ -64,7 +64,7 @@ item_map = {
 rule_priority = 100.0
 
 INCOMPATIBLE_MODS: set[str] = {
-    "LW2 Classes and Perks",
+    "[WOTC] LW2 Classes and Perks",
 }
 
 # Handle mod options here
