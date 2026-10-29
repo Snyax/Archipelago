@@ -55,7 +55,10 @@ item_map = {
 rule_priority = 1.0
 
 def generate_early(world: "X2WOTCWorld"):
-    # Base game GTS classes are disabled
+    # Re-enable locations of classes this mod shares names with if ranksanity is enabled
+    if world.options.rank_sanity == world.options.rank_sanity.option_none:
+        return
+
     for soldier_class in BASE_GAME_CLASS_NAMES:
         for rank in range(2, 8):
             if world.loc_manager.enable_location(f"{soldier_class.title()}Rank{rank}"):
