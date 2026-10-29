@@ -119,13 +119,15 @@ class ItemManager:
         if not item_data.stages or not item_data.shuffle_stages:
             raise ValueError(f"Cannot shuffle stages for item {item_name}.")
 
-        shuffled_indices = sorted(item_data.shuffle_stages)
-        random.shuffle(shuffled_indices)
-        shuffled_stages = [
-            stage if index not in item_data.shuffle_stages
-            else item_data.stages[shuffled_indices.pop()]
-            for index, stage in enumerate(item_data.stages)
-        ]
+        shuffled_stages = item_data.stages.copy()
+        for step in item_data.shuffle_stages:
+            shuffled_indices = sorted(step)
+            random.shuffle(shuffled_indices)
+            shuffled_stages = [
+                stage if index not in step
+                else shuffled_stages[shuffled_indices.pop()]
+                for index, stage in enumerate(shuffled_stages)
+            ]
         self.replace(item_name, stages=shuffled_stages)
 
     def get_item_power(self, item_name: str, count: int) -> float:

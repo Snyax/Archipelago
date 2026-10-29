@@ -74,7 +74,7 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
             "PlasmaSniperCompleted",
             "AlloyCannonCompleted",
         ],
-        shuffle_stages = {7, 8, 9}
+        shuffle_stages = [{7, 8, 9}]
     ),
     "ProgressiveGunTechLwotcCompleted+": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive LW Gun+",
@@ -95,7 +95,7 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
             "PlasmaSniperCompleted",
             "AlloyCannonCompleted",
         ],
-        shuffle_stages = {8, 9, 10}
+        shuffle_stages = [{8, 9, 10}]
     ),
     "ProgressiveRifleTechLwotcCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive LW Rifle",
@@ -138,7 +138,40 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
             "PlasmaSniperCompleted",
             "AlloyCannonCompleted",
         ],
-        shuffle_stages = {3, 4, 5}
+        shuffle_stages = [{3, 4, 5}]
+    ),
+    "ProgressiveArmorTechLwotcCompleted": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Armor",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"armor", "progressive"},
+        stages = [
+            "PlatedArmorCompleted",
+            "EXOSuitCompleted",
+            "SpiderSuitCompleted",
+            "PoweredArmorCompleted",
+            "WARSuitCompleted",
+            "WraithSuitCompleted",
+        ],
+        shuffle_stages = [{1, 2}, {4, 5}]
+    ),
+    "ProgressiveArmorTechLwotcCompleted+": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Armor+",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"armor", "progressive"},
+        stages = [
+            "HybridMaterialsCompleted",
+            "PlatedArmorCompleted",
+            "EXOSuitCompleted",
+            "SpiderSuitCompleted",
+            "PoweredArmorCompleted",
+            "WARSuitCompleted",
+            "WraithSuitCompleted",
+        ],
+        shuffle_stages = [{2, 3}, {5, 6}]
     ),
     "ProgressiveHeavyArmorTechLwotcCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive LW Heavy Armor",

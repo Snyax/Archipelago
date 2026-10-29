@@ -30,7 +30,7 @@ class X2WOTCItemData(NamedTuple):
                             # "WOTC": War of the Chosen
     normal_location: str | None = None
     stages: list[str | None] | None = None  # For progressive items
-    shuffle_stages: set[int] | None = None  # Shuffle stages at these indices
+    shuffle_stages: list[set[int]] | None = None  # Shuffle stages at these indices
 
     mutable_fields = {"classification", "tags", "power", "stages"}
 
@@ -564,7 +564,7 @@ progressive_tech_items: dict[str, X2WOTCItemData] = {
             "HeavyPlasmaCompleted",
             "PlasmaSniperCompleted",
         ],
-        shuffle_stages = {3, 4, 5}
+        shuffle_stages = [{3, 4, 5}]
     ),
     "ProgressiveGunTechCompleted+": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive Gun+",
@@ -581,7 +581,7 @@ progressive_tech_items: dict[str, X2WOTCItemData] = {
             "HeavyPlasmaCompleted",
             "PlasmaSniperCompleted",
         ],
-        shuffle_stages = {4, 5, 6}
+        shuffle_stages = [{4, 5, 6}]
     ),
     "ProgressiveRifleShotgunTechCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive Rifle/Shotgun",
@@ -594,7 +594,7 @@ progressive_tech_items: dict[str, X2WOTCItemData] = {
             "PlasmaRifleCompleted",
             "AlloyCannonCompleted",
         ],
-        shuffle_stages = {1, 2}
+        shuffle_stages = [{1, 2}]
     ),
     "ProgressiveRifleShotgunTechCompleted+": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive Rifle/Shotgun+",
@@ -608,7 +608,7 @@ progressive_tech_items: dict[str, X2WOTCItemData] = {
             "PlasmaRifleCompleted",
             "AlloyCannonCompleted",
         ],
-        shuffle_stages = {2, 3}
+        shuffle_stages = [{2, 3}]
     ),
     "ProgressiveCannonSniperTechCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive Cannon/Sniper",
@@ -621,7 +621,7 @@ progressive_tech_items: dict[str, X2WOTCItemData] = {
             "HeavyPlasmaCompleted",
             "PlasmaSniperCompleted",
         ],
-        shuffle_stages = {1, 2}
+        shuffle_stages = [{1, 2}]
     ),
     "ProgressiveArmorTechCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive Armor",
