@@ -43,12 +43,24 @@ def get_slot_info(slot: int) -> NetworkSlot | None:
         logger.debug(f"Proxy: No slot {slot}")
         return None
 
-# Resolve APworld mod location mapping
+# Resolve APWorld mod location mapping
 def mod_loc_map(loc_name: str) -> str:
     for mod_data in reversed(mods_data):
         if mod_data.name in ctx.active_mods and loc_name in mod_data.location_map:
             loc_name = mod_data.location_map[loc_name]
             break
+    return loc_name
+
+def mod_loc_map_inverse(loc_name: str) -> str:
+    for mod_data in reversed(mods_data):
+        if mod_data.name in ctx.active_mods:
+            keys = [key for key, value in mod_data.location_map.items() if value == loc_name]
+            if len(keys) == 1:
+                loc_name = keys[0]
+                break
+            elif len(keys) > 1:
+                logger.warning(f"Proxy: Tried to translate non-unique location {loc_name}")
+                break
     return loc_name
 
 # Resolve APWorld mod item mapping
@@ -79,7 +91,7 @@ async def scout_loop():
 
             await ctx.scouted.wait()
             ctx.fill_spoiler([{
-                "location": ctx.loc_manager.loc_id_to_key[loc_id],
+                "location": mod_loc_map_inverse(ctx.loc_manager.loc_id_to_key[loc_id]),
                 "item": ctx.item_names.lookup_in_slot(item.item, item.player),
                 "player": ctx.slot_info[item.player].name,
                 "game": ctx.slot_info[item.player].game,
@@ -254,7 +266,7 @@ async def handle_hint(request: web.Request):
     if not ctx.connected.is_set():
         return web.Response(status=503)
     
-    hints = [hint for hint in request.match_info["tail"].split("/") if hint != ""]
+    hints = [mod_loc_map(hint) for hint in request.match_info["tail"].split("/") if hint != ""]
     await ctx.send_msgs([{
         "cmd": "LocationScouts",
         "locations": [
