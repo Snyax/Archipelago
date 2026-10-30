@@ -102,3 +102,14 @@ class LocationManager:
         self.enabled[loc_name] = False
         self.num_locations -= 1
         return True
+
+    def enable_location(self, loc_name: str) -> bool:
+        if self.locked:
+            raise RuntimeError("Cannot enable locations after location manager has been locked.")
+
+        if self.enabled[loc_name]:
+            return False
+
+        self.enabled[loc_name] = True
+        self.num_locations += 1
+        return True
