@@ -182,6 +182,29 @@ lwotc_techs: dict[str, X2WOTCItemData] = {
         ],
         shuffle_stages = [{2, 3}, {5, 6}]
     ),
+    "ProgressiveStandardArmorTechLwotcCompleted": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Standard Armor",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"armor", "progressive"},
+        stages = [
+            "_PlatedArmorCompleted_LW",
+            "PoweredArmorCompleted",
+        ]
+    ),
+    "ProgressiveStandardArmorTechLwotcCompleted+": X2WOTCItemData(
+        display_name = TECH_ITEM_PREFIX + "Progressive LW Standard Armor+",
+        id = get_new_item_id(),
+        classification = IC.progression | IC.useful,
+        type = "TechCompleted",
+        tags = {"armor", "progressive"},
+        stages = [
+            "HybridMaterialsCompleted",
+            "_PlatedArmorCompleted_LW",
+            "PoweredArmorCompleted",
+        ]
+    ),
     "ProgressiveHeavyArmorTechLwotcCompleted": X2WOTCItemData(
         display_name = TECH_ITEM_PREFIX + "Progressive LW Heavy Armor",
         id = get_new_item_id(),
