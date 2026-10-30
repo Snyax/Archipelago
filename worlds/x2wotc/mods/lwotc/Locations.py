@@ -103,6 +103,15 @@ lwotc_techs: dict[str, X2WOTCLocationData] = {
         difficulty = fl_to_diff(9),
         normal_item = "_GaussWeaponsCompleted_LW"
     ),
+    "_PlatedArmor_LW": X2WOTCLocationData(
+        display_name = TECH_LOCATION_PREFIX + "Combat Armor",
+        id = get_new_location_id(),
+        layer = "Strategy",
+        type = "Tech",
+        tags = {"tree:HybridMaterials"},
+        difficulty = fl_to_diff(9),
+        normal_item = "_PlatedArmorCompleted_LW"
+    ),
     "Coilguns": X2WOTCLocationData(
         display_name = TECH_LOCATION_PREFIX + "Coilguns",
         id = get_new_location_id(),
@@ -126,7 +135,7 @@ lwotc_techs: dict[str, X2WOTCLocationData] = {
         id = get_new_location_id(),
         layer = "Strategy",
         type = "Tech",
-        tags = {"tree:PlatedArmor"},
+        tags = {"tree:_PlatedArmor_LW"},
         difficulty = fl_to_diff(10),
         normal_item = "EXOSuitCompleted"
     ),
@@ -144,7 +153,7 @@ lwotc_techs: dict[str, X2WOTCLocationData] = {
         id = get_new_location_id(),
         layer = "Strategy",
         type = "Tech",
-        tags = {"tree:PlatedArmor"},
+        tags = {"tree:_PlatedArmor_LW"},
         difficulty = fl_to_diff(10),
         normal_item = "SpiderSuitCompleted"
     ),
