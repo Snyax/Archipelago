@@ -55,14 +55,15 @@ item_map = {
 rule_priority = 1.0
 
 def generate_early(world: "X2WOTCWorld"):
-    # Re-enable locations of classes this mod shares names with if ranksanity is enabled
-    if world.options.rank_sanity == world.options.rank_sanity.option_none:
-        return
-
-    for soldier_class in BASE_GAME_CLASS_NAMES:
-        for rank in range(2, 8):
-            if world.loc_manager.enable_location(f"{soldier_class.title()}Rank{rank}"):
-                world.item_manager.add_item(f"{soldier_class.title()}Rank")
+    # This mod reappropriates vanilla promotion items and locations for its own replacement classes of the same name,
+    # despite using distinct soldier class templates. Another mod (with lower rule_priority) may have previously
+    # disabled these, but is otherwise not opposed to our new classes, so we re-enable them when necessary.
+    # This will not be compatible with other mods that want to do the same.
+    if world.options.rank_sanity != "none":
+        for soldier_class in BASE_GAME_CLASS_NAMES:
+            for rank in range(2, 8):
+                if world.loc_manager.enable_location(f"{soldier_class.title()}Rank{rank}"):
+                    world.item_manager.add_item(f"{soldier_class.title()}Rank")
 
 brigadier_locations: dict[str, X2WOTCLocationData] = {
     f"{class_name.title()}Rank8": X2WOTCLocationData(
