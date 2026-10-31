@@ -65,9 +65,12 @@ item_map = {
 # The order is lowest to highest priority
 rule_priority = 0.0
 
+incompatible_mods = [
+    "[WOTC] LW2 Classes and Perks",
+]
+
 # Handle mod options here
 def generate_early(world: "X2WOTCWorld"):
-
     # Mission skips not supported
     if world.options.skip_mission_types:
         world.options.skip_mission_types.value = set()
