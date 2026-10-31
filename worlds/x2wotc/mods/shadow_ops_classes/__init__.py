@@ -28,25 +28,25 @@ SOLDIER_CLASSES = {
 }
 
 items: dict[str, X2WOTCItemData] = {
-    f"{internal_name.title()}Rank": X2WOTCItemData(
+    f"{internal_name}Rank": X2WOTCItemData(
         display_name = PROMOTION_ITEM_PREFIX + localized_name,
         id = get_new_item_id(),
         classification = IC.progression,
         type = "Promotion",
-        tags = {f"{localized_name.lower().replace(" ", "_")}"},
+        tags = {localized_name.lower().replace(" ", "_")},
         power = 15.0,
     )
     for internal_name, localized_name in SOLDIER_CLASSES.items()
 }
 
 locations: dict[str, X2WOTCLocationData] = {
-    f"{internal_name.title()}Rank{rank}": X2WOTCLocationData(
+    f"{internal_name}Rank{rank}": X2WOTCLocationData(
         display_name = SOLDIER_RANK_LOCATION_PREFIX + localized_name + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[rank],
         id = get_new_location_id(),
         type = "SoldierRank",
-        tags = {f"{localized_name.lower().replace(" ", "_")}", f"item:{internal_name.title()}Rank:{rank - 1}"},
+        tags = {localized_name.lower().replace(" ", "_"), f"item:{internal_name}Rank:{rank - 1}"},
         dlc = None,
-        normal_item = f"{internal_name.title()}Rank"
+        normal_item = f"{internal_name}Rank"
     )
     for internal_name, localized_name in SOLDIER_CLASSES.items()
     for rank in range(2, MAX_RANK + 1)
@@ -54,6 +54,7 @@ locations: dict[str, X2WOTCLocationData] = {
 
 config: dict[str, str] = {
     "WOTCArchipelago_Ranksanity": "\n".join(
-        f'+RanksanityData=(ID="{internal_name.title()}", ClassName="{internal_name.title()}", {RANKS_STR})' for internal_name in SOLDIER_CLASSES.keys()
+        f'+RanksanityData=(ID="{internal_name}", ClassName="{internal_name}", {RANKS_STR})'
+        for internal_name in SOLDIER_CLASSES.keys()
     )
 }
