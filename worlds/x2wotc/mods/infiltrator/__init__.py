@@ -28,7 +28,7 @@ items: dict[str, X2WOTCItemData] = {
 }
 
 locations: dict[str, X2WOTCLocationData] = {
-    f"infiltratorRank{rank}": X2WOTCLocationData(
+    f"InfiltratorRank{rank}": X2WOTCLocationData(
         display_name = SOLDIER_RANK_LOCATION_PREFIX + "Infiltrator" + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[rank],
         id = get_new_location_id(),
         type = "SoldierRank",
