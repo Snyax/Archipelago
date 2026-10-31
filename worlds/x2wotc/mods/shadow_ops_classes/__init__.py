@@ -9,7 +9,9 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "[WOTC] Shadow Ops Perk Pack"
+
+name = "Shadow Ops Perk Pack"
+id = 1519841231
 
 rule_priority = 0.0
 
@@ -34,7 +36,7 @@ items: dict[str, X2WOTCItemData] = {
         classification = IC.progression,
         type = "Promotion",
         tags = {localized_name.lower().replace(" ", "_")},
-        power = 15.0,
+        power = 15.0
     )
     for internal_name, localized_name in SOLDIER_CLASSES.items()
 }
@@ -45,7 +47,6 @@ locations: dict[str, X2WOTCLocationData] = {
         id = get_new_location_id(),
         type = "SoldierRank",
         tags = {localized_name.lower().replace(" ", "_"), f"item:{internal_name}Rank:{rank - 1}"},
-        dlc = None,
         normal_item = f"{internal_name}Rank"
     )
     for internal_name, localized_name in SOLDIER_CLASSES.items()

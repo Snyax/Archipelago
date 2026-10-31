@@ -9,7 +9,9 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "[WOTC] Burner and Rocketeer classes"
+
+name = "Burner and Rocketeer Classes"
+id = 1527656509
 
 rule_priority = 0.0
 
@@ -27,8 +29,8 @@ items: dict[str, X2WOTCItemData] = {
         id = get_new_item_id(),
         classification = IC.progression,
         type = "Promotion",
-        tags = {localized_name.lower()},
-        power = 15.0,
+        tags = {localized_name.lower().replace(" ", "_")},
+        power = 15.0
     )
     for internal_name, localized_name in SOLDIER_CLASSES.items()
 }
@@ -38,8 +40,7 @@ locations: dict[str, X2WOTCLocationData] = {
         display_name = SOLDIER_RANK_LOCATION_PREFIX + localized_name + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[rank],
         id = get_new_location_id(),
         type = "SoldierRank",
-        tags = {localized_name.lower(), f"item:{internal_name}Rank:{rank - 1}"},
-        dlc = None,
+        tags = {localized_name.lower().replace(" ", "_"), f"item:{internal_name}Rank:{rank - 1}"},
         normal_item = f"{internal_name}Rank"
     )
     for internal_name, localized_name in SOLDIER_CLASSES.items()

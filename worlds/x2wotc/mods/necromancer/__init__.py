@@ -9,36 +9,46 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "Necromancer Class - WOTC"
+
+name = "Necromancer Class"
+id = 1137913176
 
 rule_priority = 0.0
 
 MAX_RANK = 8
 RANKS_STR = ", ".join(f"Ranks[{i-2}]={i}" for i in range(2, MAX_RANK+1))
+# Keys are internal names, values are localized names
+SOLDIER_CLASSES = {
+    "NecromancerClassWOTC": "Necromancer",
+}
 
 items: dict[str, X2WOTCItemData] = {
-    "NecromancerClassWOTCRank": X2WOTCItemData(
-        display_name = PROMOTION_ITEM_PREFIX + "Necromancer",
+    f"{internal_name}Rank": X2WOTCItemData(
+        display_name = PROMOTION_ITEM_PREFIX + localized_name,
         id = get_new_item_id(),
         classification = IC.progression,
         type = "Promotion",
-        tags = {"necromancer"},
-        power = 15.0,
+        tags = {localized_name.lower().replace(" ", "_")},
+        power = 15.0
     )
+    for internal_name, localized_name in SOLDIER_CLASSES.items()
 }
 
 locations: dict[str, X2WOTCLocationData] = {
-    f"NecromancerClassWOTCRank{rank}": X2WOTCLocationData(
-        display_name = SOLDIER_RANK_LOCATION_PREFIX + "Necromancer" + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[rank],
+    f"{internal_name}Rank{rank}": X2WOTCLocationData(
+        display_name = SOLDIER_RANK_LOCATION_PREFIX + localized_name + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[rank],
         id = get_new_location_id(),
         type = "SoldierRank",
-        tags = {"necromancer", f"item:NecromancerClassWOTCRank:{rank - 1}"},
-        dlc = None,
-        normal_item = "NecromancerClassWOTCRank"
+        tags = {localized_name.lower().replace(" ", "_"), f"item:{internal_name}Rank:{rank - 1}"},
+        normal_item = f"{internal_name}Rank"
     )
+    for internal_name, localized_name in SOLDIER_CLASSES.items()
     for rank in range(2, MAX_RANK + 1)
 }
 
 config: dict[str, str] = {
-    "WOTCArchipelago_Ranksanity": f'+RanksanityData=(ID="NecromancerClassWOTC", ClassName="NecromancerClassWOTC", {RANKS_STR})'
+    "WOTCArchipelago_Ranksanity": "\n".join(
+        f'+RanksanityData=(ID="{internal_name}", ClassName="{internal_name}", {RANKS_STR})'
+        for internal_name in SOLDIER_CLASSES.keys()
+    )
 }

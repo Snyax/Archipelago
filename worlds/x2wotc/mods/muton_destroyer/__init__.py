@@ -11,7 +11,7 @@ from worlds.x2wotc.LocationData import (
 
 
 # Steam workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=2482812108
-name = "Muton Destroyer - WotC"
+name = "Muton Destroyer"
 id = 2482812108
 
 items: dict[str, X2WOTCItemData] = {

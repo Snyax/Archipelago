@@ -14,6 +14,7 @@ from .Rules import set_rules
 
 name = "Long War of the Chosen"
 id = 2683996590
+
 location_map = {
     "GaussWeapons": "_GaussWeapons_LW",
     "PlatedArmor": "_PlatedArmor_LW",
@@ -66,7 +67,7 @@ item_map = {
 rule_priority = 0.0
 
 incompatible_mods = [
-    "[WOTC] LW2 Classes and Perks",
+    1335226018,  # LW2 Classes and Perks
 ]
 
 # Handle mod options here

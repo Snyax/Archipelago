@@ -9,37 +9,47 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "[WOTC] Iridar's Bounty Hunter Class"
+
+name = "Iridar's Bounty Hunter Class"
+id = 2833600827
 
 rule_priority = 0.0
 
 MAX_RANK = 7
 RANKS_STR = ", ".join(f"Ranks[{i-2}]={i}" for i in range(2, MAX_RANK+1))
+# Keys are internal names, values are localized names
+SOLDIER_CLASSES = {
+    "BountyHunter": "Bounty Hunter",
+}
 
 items: dict[str, X2WOTCItemData] = {
-    "BountyHunterRank": X2WOTCItemData(
-        display_name = PROMOTION_ITEM_PREFIX + "Bounty Hunter",
+    f"{internal_name}Rank": X2WOTCItemData(
+        display_name = PROMOTION_ITEM_PREFIX + localized_name,
         id = get_new_item_id(),
         classification = IC.progression,
         type = "Promotion",
-        tags = {"bounty_hunter"},
-        power = 15.0,
+        tags = {localized_name.lower().replace(" ", "_")},
+        power = 15.0
     )
+    for internal_name, localized_name in SOLDIER_CLASSES.items()
 }
 
 locations: dict[str, X2WOTCLocationData] = {
-    f"BountyHunterRank{rank}": X2WOTCLocationData(
-        display_name = SOLDIER_RANK_LOCATION_PREFIX + "Bounty Hunter" + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[rank],
+    f"{internal_name}Rank{rank}": X2WOTCLocationData(
+        display_name = SOLDIER_RANK_LOCATION_PREFIX + localized_name + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[rank],
         id = get_new_location_id(),
         type = "SoldierRank",
-        tags = {"bounty_hunter", f"item:BountyHunterRank:{rank - 1}"},
+        tags = {localized_name.lower().replace(" ", "_"), f"item:{internal_name}Rank:{rank - 1}"},
         difficulty = 10.0,  # You get one out of a CA
-        dlc = None,
-        normal_item = "BountyHunterRank"
+        normal_item = f"{internal_name}Rank"
     )
+    for internal_name, localized_name in SOLDIER_CLASSES.items()
     for rank in range(2, MAX_RANK + 1)
 }
 
 config: dict[str, str] = {
-    "WOTCArchipelago_Ranksanity": f'+RanksanityData=(ID="BountyHunter", ClassName="BountyHunter", {RANKS_STR})'
+    "WOTCArchipelago_Ranksanity": "\n".join(
+        f'+RanksanityData=(ID="{internal_name}", ClassName="{internal_name}", {RANKS_STR})'
+        for internal_name in SOLDIER_CLASSES.keys()
+    )
 }

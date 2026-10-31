@@ -10,7 +10,7 @@ from worlds.x2wotc.LocationData import (
 
 
 # Steam workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=1160638944
-name = "Flame Viper - WotC"
+name = "Flame Viper"
 id = 1160638944
 
 items: dict[str, X2WOTCItemData] = {

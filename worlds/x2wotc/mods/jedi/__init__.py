@@ -8,12 +8,18 @@ from worlds.x2wotc.LocationData import (
     SOLDIER_RANK_LOCATION_INFIX,
 )
 
+
 name = "Jedi Class Revised"
+id = 2031929512
 
 rule_priority = 0.0
 
 MAX_RANK = 8
 RANKS_STR = ", ".join(f"Ranks[{i-2}]={i}" for i in range(2, MAX_RANK+1))
+# Keys are internal names, values are localized names
+SOLDIER_CLASSES = {
+    "Jedi": "Jedi",
+}
 RANK_NAMES = [
     "Rookie",
     "Initiate",
@@ -27,29 +33,33 @@ RANK_NAMES = [
 ]
 
 items: dict[str, X2WOTCItemData] = {
-    "JediRank": X2WOTCItemData(
-        display_name = PROMOTION_ITEM_PREFIX + "Jedi",
+    f"{internal_name}Rank": X2WOTCItemData(
+        display_name = PROMOTION_ITEM_PREFIX + localized_name,
         id = get_new_item_id(),
         classification = IC.progression,
         type = "Promotion",
-        tags = {"jedi"},
-        power = 15.0,
+        tags = {localized_name.lower().replace(" ", "_")},
+        power = 15.0
     )
+    for internal_name, localized_name in SOLDIER_CLASSES.items()
 }
 
 locations: dict[str, X2WOTCLocationData] = {
-    f"JediRank{rank}": X2WOTCLocationData(
-        display_name = SOLDIER_RANK_LOCATION_PREFIX + "Jedi" + SOLDIER_RANK_LOCATION_INFIX + RANK_NAMES[rank],
+    f"{internal_name}Rank{rank}": X2WOTCLocationData(
+        display_name = SOLDIER_RANK_LOCATION_PREFIX + localized_name + SOLDIER_RANK_LOCATION_INFIX + RANK_NAMES[rank],
         id = get_new_location_id(),
         type = "SoldierRank",
-        tags = {"jedi", f"item:JediRank:{rank - 1}"},
+        tags = {localized_name.lower().replace(" ", "_"), f"item:{internal_name}Rank:{rank - 1}"},
         difficulty = 25.0,  # Only obtained by random promotion
-        dlc = None,
-        normal_item = "JediRank"
+        normal_item = f"{internal_name}Rank"
     )
+    for internal_name, localized_name in SOLDIER_CLASSES.items()
     for rank in range(2, MAX_RANK + 1)
 }
 
 config: dict[str, str] = {
-    "WOTCArchipelago_Ranksanity": f'+RanksanityData=(ID="Jedi", ClassName="Jedi", {RANKS_STR})'
+    "WOTCArchipelago_Ranksanity": "\n".join(
+        f'+RanksanityData=(ID="{internal_name}", ClassName="{internal_name}", {RANKS_STR})'
+        for internal_name in SOLDIER_CLASSES.keys()
+    )
 }

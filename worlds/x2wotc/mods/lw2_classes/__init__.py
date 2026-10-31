@@ -14,6 +14,7 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
+
 MAX_RANK = 8
 
 BASE_GAME_CLASS_NAMES = [
@@ -30,7 +31,9 @@ LW2_CLASS_NAMES = [
     "Technical",
 ]
 
-name = "[WOTC] LW2 Classes and Perks"
+name = "LW2 Classes and Perks"
+id = 1335226018
+
 location_map = {
     f"LWOTC_{class_name}Rank{rank}": f"{class_name}Rank{rank}"
     for class_name in BASE_GAME_CLASS_NAMES

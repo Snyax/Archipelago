@@ -9,37 +9,47 @@ from worlds.x2wotc.LocationData import (
     DEFAULT_RANK_NAMES,
 )
 
-name = "[WOTC] Iridar's Stormrider Class"
+
+name = "Iridar's Stormrider Class"
+id = 2042813766
 
 rule_priority = 0.0
 
 MAX_RANK = 7
 RANKS_STR = ", ".join(f"Ranks[{i-2}]={i}" for i in range(2, MAX_RANK+1))
+# Keys are internal names, values are localized names
+SOLDIER_CLASSES = {
+    "Stormrider": "Stormrider",
+}
 
 items: dict[str, X2WOTCItemData] = {
-    "StormriderRank": X2WOTCItemData(
-        display_name = PROMOTION_ITEM_PREFIX + "Stormrider",
+    f"{internal_name}Rank": X2WOTCItemData(
+        display_name = PROMOTION_ITEM_PREFIX + localized_name,
         id = get_new_item_id(),
         classification = IC.progression,
         type = "Promotion",
-        tags = {"stormrider"},
-        power = 15.0,
+        tags = {localized_name.lower().replace(" ", "_")},
+        power = 15.0
     )
+    for internal_name, localized_name in SOLDIER_CLASSES.items()
 }
 
 locations: dict[str, X2WOTCLocationData] = {
-    f"StormriderRank{rank}": X2WOTCLocationData(
-        display_name = SOLDIER_RANK_LOCATION_PREFIX + "Stormrider" + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[rank],
+    f"{internal_name}Rank{rank}": X2WOTCLocationData(
+        display_name = SOLDIER_RANK_LOCATION_PREFIX + localized_name + SOLDIER_RANK_LOCATION_INFIX + DEFAULT_RANK_NAMES[rank],
         id = get_new_location_id(),
         type = "SoldierRank",
-        tags = {"stormrider", f"item:StormriderRank:{rank - 1}"},
+        tags = {localized_name.lower().replace(" ", "_"), f"item:{internal_name}Rank:{rank - 1}"},
         difficulty = 25.0,  # Requires all other (GTS trainable) classes obtained first
-        dlc = None,
-        normal_item = "StormriderRank"
+        normal_item = f"{internal_name}Rank"
     )
+    for internal_name, localized_name in SOLDIER_CLASSES.items()
     for rank in range(2, MAX_RANK + 1)
 }
 
 config: dict[str, str] = {
-    "WOTCArchipelago_Ranksanity": f'+RanksanityData=(ID="Stormrider", ClassName="Stormrider", {RANKS_STR})'
+    "WOTCArchipelago_Ranksanity": "\n".join(
+        f'+RanksanityData=(ID="{internal_name}", ClassName="{internal_name}", {RANKS_STR})'
+        for internal_name in SOLDIER_CLASSES.keys()
+    )
 }
