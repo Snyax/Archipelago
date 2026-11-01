@@ -133,9 +133,6 @@ class RankSanity(Choice):
                 or (self.value == self.option_base_classes_only
                     and any(tag in tags for tag in self.spark_tags | self.faction_hero_tags)))
 
-    def all_humans_included(self) -> bool:
-        return self.value == self.option_no_spark or self.value == self.option_all
-
 
 class GlobalPromotions(Toggle):
     """Enable global promotions for all soldier classes, including those not covered by Ranksanity.

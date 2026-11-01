@@ -42,11 +42,14 @@ class RuleManager:
             for loc_name in self.loc_manager.location_table.keys()
         }
 
-        # Compile promotion items for human soldier classes
-        self.human_rank_items: set[str] = {
+        # Compile promotion items for base soldier classes
+        non_base_class_tags = self.options.rank_sanity.spark_tags | self.options.rank_sanity.faction_hero_tags
+        self.base_class_promotion_items: set[str] = {
             item_name
             for item_name, item_data in self.item_manager.item_table.items()
-            if item_data.type == "Promotion" and "spark" not in item_data.tags
+            if (item_data.type == "Promotion"
+                and self.item_manager.item_count[item_name] > 0
+                and not non_base_class_tags & item_data.tags)
         }
 
     #==================================================================================================================#
@@ -97,15 +100,14 @@ class RuleManager:
     #                                             RANKSANITY HELPERS                                                   #
     #------------------------------------------------------------------------------------------------------------------#
 
-    def has_human_soldier_rank(self, state: CollectionState, rank: int) -> bool:
-        if not self.options.rank_sanity.all_humans_included():
-            return True
+    def has_base_class_rank(self, state: CollectionState, rank: int) -> bool:
+        return any(
+            self.get_item_count(state, promotion_item) >= rank - 1
+            for promotion_item in self.base_class_promotion_items
+        )
 
-        for human_rank_item in self.human_rank_items:
-            if self.get_item_count(state, human_rank_item) >= rank - 1:
-                return True
-
-        return False
+    def get_rank_rule(self, rank: int) -> Callable[[CollectionState], bool]:
+        return lambda state: self.has_base_class_rank(state, rank)
 
     #==================================================================================================================#
     #                                             STORY RULE HELPERS                                                   #
@@ -384,19 +386,15 @@ class RuleManager:
             for tag in loc_data.tags:
                 if tag.startswith("item:"):
                     data = tag[5:].split(":") + [1]
-                    requirement_rule = self.get_item_count_rule(data[0], int(data[1]))
-                    add_rule(location, requirement_rule)
+                    item_rule = self.get_item_count_rule(data[0], int(data[1]))
+                    add_rule(location, item_rule)
 
             #--------------------------------------- Ranksanity rules -------------------------------------------------#
             #----------------------------------------------------------------------------------------------------------#
-            if loc_name.startswith("ChosenHuntPt1"):
-                add_rule(location, lambda state: self.has_human_soldier_rank(state, 3))
-
-            if loc_name.startswith("ChosenHuntPt2"):
-                add_rule(location, lambda state: self.has_human_soldier_rank(state, 4))
-
-            if loc_name.startswith("ChosenHuntPt3"):
-                add_rule(location, lambda state: self.has_human_soldier_rank(state, 6))
+            for tag in loc_data.tags:
+                if tag.startswith("rank:"):
+                    rank_rule = self.get_rank_rule(int(tag[5:]))
+                    add_rule(location, rank_rule)
 
             #----------------------------------------------------------------------------------------------------------#
             #------------------------- See ./Regions.py for entrance access rules -------------------------------------#

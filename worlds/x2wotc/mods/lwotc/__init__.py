@@ -233,17 +233,22 @@ def generate_early(world: "X2WOTCWorld"):
         ("SkirmisherRank3", {"skirmisher", "item:SkirmisherRank:3"}),  # Sergeant
         ("ReaperRank2", {"reaper", "item:ReaperRank:2"}),  # Corporal
         ("ReaperRank3", {"reaper", "item:ReaperRank:3"}),  # Sergeant
-        ("ChosenHuntPt1:1", {"chosen_hunt", "meet_first_chosen", "influence:0"}),
-        ("ChosenHuntPt1:2", {"chosen_hunt", "meet_first_chosen", "influence:0"}),
-        ("ChosenHuntPt1:3", {"chosen_hunt", "meet_first_chosen", "influence:0"}),
-        ("ChosenHuntPt2:1", {"chosen_hunt", "meet_first_chosen", "influence:1"}),
-        ("ChosenHuntPt2:2", {"chosen_hunt", "meet_first_chosen", "influence:3"}),
-        ("ChosenHuntPt2:3", {"chosen_hunt", "meet_first_chosen", "influence:5"}),
-        ("ChosenHuntPt3:1", {"chosen_hunt", "meet_first_chosen", "influence:2"}),
-        ("ChosenHuntPt3:2", {"chosen_hunt", "meet_first_chosen", "influence:4"}),
-        ("ChosenHuntPt3:3", {"chosen_hunt", "meet_first_chosen", "influence:6"}),
+        ("ChosenHuntPt1:1", {"chosen_hunt", "meet_first_chosen", "rank:4"}),
+        ("ChosenHuntPt1:2", {"chosen_hunt", "meet_all_chosen", "rank:4"}),
+        ("ChosenHuntPt1:3", {"chosen_hunt", "meet_all_chosen", "rank:4"}),
+        ("ChosenHuntPt2:1", {"chosen_hunt", "meet_first_chosen", "item:FactionInfluence:1", "rank:6"}),
+        ("ChosenHuntPt2:2", {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:3", "rank:6"}),
+        ("ChosenHuntPt2:3", {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:5", "rank:6"}),
+        ("ChosenHuntPt3:1", {"chosen_hunt", "meet_first_chosen", "item:FactionInfluence:2", "rank:8"}),
+        ("ChosenHuntPt3:2", {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:4", "rank:8"}),
+        ("ChosenHuntPt3:3", {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:6", "rank:8"}),
     ]:
         world.loc_manager.replace(loc, tags=tag)
+
+    # Need Staff Sergeant to contact all resistance factions
+    for loc_name, loc_data in world.loc_manager.location_table.items():
+        if loc_data.tags & world.options.rank_sanity.faction_hero_tags:
+            world.loc_manager.replace(loc_name, tags=(loc_data.tags | {"rank:5"}))
 
     for loc, diff in [
         ("Psionics", fl_to_diff(4)),

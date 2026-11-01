@@ -1032,7 +1032,7 @@ chosen_hunt_covert_actions: dict[str, X2WOTCLocationData] = {
         display_name = COVERT_ACTION_LOCATION_PREFIX + "Behind Enemy Lines (1/3)",
         id = get_new_location_id(),
         type = "CovertAction",
-        tags = {"chosen_hunt", "meet_first_chosen"},
+        tags = {"chosen_hunt", "meet_first_chosen", "rank:3"},
         difficulty = 20.0,
         dlc = "WOTC"
     ),
@@ -1040,7 +1040,7 @@ chosen_hunt_covert_actions: dict[str, X2WOTCLocationData] = {
         display_name = COVERT_ACTION_LOCATION_PREFIX + "Behind Enemy Lines (2/3)",
         id = get_new_location_id(),
         type = "CovertAction",
-        tags = {"chosen_hunt", "meet_all_chosen"},
+        tags = {"chosen_hunt", "meet_all_chosen", "rank:3"},
         difficulty = 35.0,
         dlc = "WOTC"
     ),
@@ -1048,7 +1048,7 @@ chosen_hunt_covert_actions: dict[str, X2WOTCLocationData] = {
         display_name = COVERT_ACTION_LOCATION_PREFIX + "Behind Enemy Lines (3/3)",
         id = get_new_location_id(),
         type = "CovertAction",
-        tags = {"chosen_hunt", "meet_all_chosen"},
+        tags = {"chosen_hunt", "meet_all_chosen", "rank:3"},
         difficulty = 50.0,
         dlc = "WOTC"
     ),
@@ -1056,7 +1056,7 @@ chosen_hunt_covert_actions: dict[str, X2WOTCLocationData] = {
         display_name = COVERT_ACTION_LOCATION_PREFIX + "Find the Stronghold (1/3)",
         id = get_new_location_id(),
         type = "CovertAction",
-        tags = {"chosen_hunt", "meet_first_chosen", "item:FactionInfluence:1"},
+        tags = {"chosen_hunt", "meet_first_chosen", "item:FactionInfluence:1", "rank:4"},
         difficulty = 30.0,
         dlc = "WOTC"
     ),
@@ -1064,7 +1064,7 @@ chosen_hunt_covert_actions: dict[str, X2WOTCLocationData] = {
         display_name = COVERT_ACTION_LOCATION_PREFIX + "Find the Stronghold (2/3)",
         id = get_new_location_id(),
         type = "CovertAction",
-        tags = {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:3"},
+        tags = {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:3", "rank:4"},
         difficulty = 45.0,
         dlc = "WOTC"
     ),
@@ -1072,7 +1072,7 @@ chosen_hunt_covert_actions: dict[str, X2WOTCLocationData] = {
         display_name = COVERT_ACTION_LOCATION_PREFIX + "Find the Stronghold (3/3)",
         id = get_new_location_id(),
         type = "CovertAction",
-        tags = {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:5"},
+        tags = {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:5", "rank:4"},
         difficulty = 60.0,
         dlc = "WOTC"
     ),
@@ -1080,7 +1080,7 @@ chosen_hunt_covert_actions: dict[str, X2WOTCLocationData] = {
         display_name = COVERT_ACTION_LOCATION_PREFIX + "Into the Fire (1/3)",
         id = get_new_location_id(),
         type = "CovertAction",
-        tags = {"chosen_hunt", "meet_first_chosen", "item:FactionInfluence:2"},
+        tags = {"chosen_hunt", "meet_first_chosen", "item:FactionInfluence:2", "rank:6"},
         difficulty = 40.0,
         dlc = "WOTC"
     ),
@@ -1088,7 +1088,7 @@ chosen_hunt_covert_actions: dict[str, X2WOTCLocationData] = {
         display_name = COVERT_ACTION_LOCATION_PREFIX + "Into the Fire (2/3)",
         id = get_new_location_id(),
         type = "CovertAction",
-        tags = {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:4"},
+        tags = {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:4", "rank:6"},
         difficulty = 55.0,
         dlc = "WOTC"
     ),
@@ -1096,7 +1096,7 @@ chosen_hunt_covert_actions: dict[str, X2WOTCLocationData] = {
         display_name = COVERT_ACTION_LOCATION_PREFIX + "Into the Fire (3/3)",
         id = get_new_location_id(),
         type = "CovertAction",
-        tags = {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:6"},
+        tags = {"chosen_hunt", "meet_all_chosen", "item:FactionInfluence:6", "rank:6"},
         difficulty = 70.0,
         dlc = "WOTC"
     ),
