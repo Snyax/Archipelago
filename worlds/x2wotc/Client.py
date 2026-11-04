@@ -332,14 +332,23 @@ class X2WOTCContext(CommonContext):
 
                 item_name = text.split('"', 1)[1]
                 item_key = self.item_manager.item_display_name_to_key[item_name]
+                item_data = self.item_manager.item_table[item_key]
+
+                # Player hinted inactive progressive item
+                if item_data.stages is not None:
+                    self.print_info("Type '/progressive' for a list of active progressive items.")
+                    continue
+
                 active_progressive_items = self.slot_data.get("active_progressive_items", [])
                 progressive_item_names = [
-                    item_data.display_name
-                    for item_name, item_data in self.item_manager.item_table.items()
-                    if item_data.stages is not None and item_key in item_data.stages
-                        and item_name in active_progressive_items
+                    progressive_item_data.display_name
+                    for progressive_item_key, progressive_item_data in self.item_manager.item_table.items()
+                    if (progressive_item_data.stages is not None
+                        and item_key in progressive_item_data.stages
+                        and progressive_item_key in active_progressive_items)
                 ]
 
+                # Player hinted stage of active progressive item
                 if progressive_item_names:
                     self.print_info("Try hinting one of the following items instead:")
                     for progressive_item_name in progressive_item_names:
