@@ -526,6 +526,7 @@ config: dict[str, str] = {
         +AdventReinforcementEncounters=ADVx2_Strong_LW
         +AlienReinforcementEncounters=ALNx2_APTrap_LW
         +AlienReinforcementEncounters=ALNx3_APTrap_LW
+        YapCentralNarrative=X2NarrativeMoments.Strategy.Central_Support_No_Supply_Income
         """
     )
 }
