@@ -160,7 +160,7 @@ async def send_checks(checks: list[str], connected: bool = True):
                 ctx.finished_game = True
                 await ctx.send_msgs([{
                     "cmd": "StatusUpdate",
-                    "status": ClientStatus.CLIENT_GOAL
+                    "status": ClientStatus.CLIENT_GOAL,
                 }])
             continue
 
