@@ -268,13 +268,12 @@ async def handle_hint(request: web.Request):
     
     hints = [mod_loc_map(hint) for hint in request.match_info["tail"].split("/") if hint != ""]
     await ctx.send_msgs([{
-        "cmd": "LocationScouts",
+        "cmd": "CreateHints",
         "locations": [
             ctx.loc_manager.location_table[hint].id
             for hint in hints
             if hint in ctx.loc_manager.location_table
         ],
-        "create_as_hint": 2
     }])
 
     return web.Response()
