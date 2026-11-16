@@ -3,20 +3,21 @@ import os
 import re
 from typing import TYPE_CHECKING, Any
 
-from CommonClient import gui_enabled, logger
+from CommonClient import ClientCommandProcessor, gui_enabled, logger
 from CommonClient import get_base_parser, handle_url_arg, server_loop
 from MultiServer import mark_raw
 from settings import Settings, get_settings
 from Utils import async_start, get_intended_text, tuplize_version
 
-# Import Context and CommandProcessor from CommonClient when TrackerClient is not available, or for type checking
+# Import Context from CommonClient when TrackerClient is not available, or for type checking
+tracker_loaded = False
 try:
-    from worlds.tracker.TrackerClient import TrackerGameContext as CommonContext  # type: ignore
-    from worlds.tracker.TrackerClient import TrackerCommandProcessor as ClientCommandProcessor  # type: ignore
+    from worlds.tracker.TrackerClient import TrackerGameContext as SuperContext  # type: ignore
+    tracker_loaded = True
 except ModuleNotFoundError:
-    from CommonClient import CommonContext, ClientCommandProcessor
+    from CommonClient import CommonContext as SuperContext
 if TYPE_CHECKING:
-    from CommonClient import CommonContext, ClientCommandProcessor
+    from CommonClient import CommonContext as SuperContext
 
 from .EnemyRando import EnemyRandoManager
 from .Items import ItemManager
@@ -193,7 +194,7 @@ class X2WOTCCommandProcessor(ClientCommandProcessor):
         return True
 
 
-class X2WOTCContext(CommonContext):
+class X2WOTCContext(SuperContext):
     command_processor = X2WOTCCommandProcessor
     game = GAME_NAME
     items_handling = 0b111  # full remote
@@ -671,6 +672,8 @@ def launch(*args):
         ctx = X2WOTCContext(args.connect, args.password)
         ctx.server_task = asyncio.create_task(server_loop(ctx), name="server_loop")
 
+        if tracker_loaded:
+            ctx.run_generator()
         if gui_enabled:
             ctx.run_gui()
         ctx.run_cli()
