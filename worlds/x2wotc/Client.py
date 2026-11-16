@@ -181,10 +181,10 @@ class X2WOTCCommandProcessor(ClientCommandProcessor):
         item_key = self.ctx.item_manager.item_display_name_to_key[result]
         stages = self.ctx.item_manager.item_table[item_key].stages
         if not stages:
-            self.output(f"No stages for progressive item '{result}'.")
+            self.output(f"No stages for progressive item {result}.")
             return True
 
-        self.output(f"Stages for progressive item '{result}':")
+        self.output(f"Stages for progressive item {result}:")
         for stage in stages:
             stage_name = "Nothing"
             if stage in self.ctx.item_manager.item_table:
@@ -336,7 +336,7 @@ class X2WOTCContext(CommonContext):
 
                 # Player hinted inactive progressive item
                 if item_data.stages is not None:
-                    self.print_info("Type '/progressive' for a list of active progressive items.")
+                    self.print_info("Type /progressive for a list of active progressive items.")
                     continue
 
                 active_progressive_items = self.slot_data.get("active_progressive_items", [])
