@@ -106,6 +106,13 @@ class ItemManager:
                 self.real_count[item_name] = 1
                 self.num_items += 1
 
+    def reset_table(self):
+        if self.locked:
+            raise RuntimeError("Cannot reset item table after item manager has been locked.")
+
+        self.item_table = deepcopy(item_table)
+        self.replaced.clear()
+
     def replace(self, item_name: str, **kwargs):
         if self.locked:
             raise RuntimeError("Cannot replace item data after item manager has been locked.")

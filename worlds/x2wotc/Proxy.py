@@ -79,23 +79,18 @@ async def scout_loop():
             await ctx.scouted.wait_clear()
             await ctx.connected.wait()
 
-            for loc_id in ctx.server_locations:  # If the server knows the location
-                if loc_id in ctx.loc_manager.loc_id_to_key.keys():  # If it's ours
-                    ctx.locations_scouted.add(loc_id)  # Scout it
-
-            if ctx.locations_scouted:
-                await ctx.send_msgs([{
-                    "cmd": "LocationScouts",
-                    "locations": list(ctx.locations_scouted)
-                }])
-
+            await ctx.send_msgs([{
+                "cmd": "LocationScouts",
+                "locations": list(ctx.server_locations),
+            }])
             await ctx.scouted.wait()
+
             ctx.fill_spoiler([{
                 "location": mod_loc_map_inverse(ctx.loc_manager.loc_id_to_key[loc_id]),
                 "item": ctx.item_names.lookup_in_slot(item.item, item.player),
                 "player": ctx.slot_info[item.player].name,
                 "game": ctx.slot_info[item.player].game,
-                "flags": item.flags
+                "flags": item.flags,
             } for loc_id, item in ctx.locations_info.items()])
 
             logger.debug("Proxy: Locations scouted")
@@ -123,7 +118,7 @@ def get_locations_info(checks: list[str]) -> LocationsInfo:
             logger.debug(f"Proxy: Location {loc_name} already checked")
             continue
 
-        if loc_id not in ctx.locations_scouted:
+        if loc_id not in ctx.locations_info:
             logger.debug(f"Proxy: Location {loc_name} not scouted, will be treated as disabled")
             item_name = loc_data.normal_item  # Send internal key for disabled locations
             locations_info[loc_name] = (item_name, None, None)

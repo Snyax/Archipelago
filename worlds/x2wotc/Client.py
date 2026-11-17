@@ -252,7 +252,6 @@ class X2WOTCContext(SuperContext):
     def __init__(self, server_address: str | None, password: str | None):
         super().__init__(server_address, password)
         self.locations_checked = set()
-        self.locations_scouted = set()
 
         self.connected = self.DualEvent()
         self.scouted = self.DualEvent()
@@ -290,9 +289,12 @@ class X2WOTCContext(SuperContext):
             self.reset_config()
         self.connected.clear()
         self.scouted.clear()
-        self.locations_scouted = set()
+
         self.slot_data = {}
         self.active_mods = []
+        self.enemy_rando_manager.enemy_shuffle.sort()
+        self.item_manager.reset_table()
+        self.loc_manager.reset_table()
 
     def on_package(self, cmd: str, args: dict):
         super().on_package(cmd, args)
@@ -319,9 +321,10 @@ class X2WOTCContext(SuperContext):
             self.print_info("Client connected and config updated. Please restart your game if it is already running.")
 
         elif cmd == "LocationInfo":
-            scouted_locations = set(item.location for item in args["locations"])
-            if self.locations_scouted == scouted_locations:
+            if self.server_locations <= set(self.locations_info.keys()):
                 self.scouted.set()
+            else:
+                logger.warning("X2WOTCClient: Received LocationInfo package did not scout all server locations")
 
         # Help players who don't know to hint progressive items
         elif cmd == "PrintJSON":

@@ -72,6 +72,13 @@ class LocationManager:
         self.enabled: dict[str, bool] = {loc_name: True for loc_name in self.location_table.keys()}
         self.num_locations: int = len(self.location_table)
 
+    def reset_table(self):
+        if self.locked:
+            raise RuntimeError("Cannot reset location table after location manager has been locked.")
+
+        self.location_table = deepcopy(location_table)
+        self.replaced.clear()
+
     def replace(self, loc_name: str, **kwargs):
         if self.locked:
             raise RuntimeError("Cannot replace location data after location manager has been locked.")
