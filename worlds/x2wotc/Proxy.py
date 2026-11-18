@@ -83,17 +83,26 @@ async def scout_loop():
                 "cmd": "LocationScouts",
                 "locations": list(ctx.server_locations),
             }])
-            await ctx.scouted.wait()
 
-            ctx.fill_spoiler([{
-                "location": mod_loc_map_inverse(ctx.loc_manager.loc_id_to_key[loc_id]),
-                "item": ctx.item_names.lookup_in_slot(item.item, item.player),
-                "player": ctx.slot_info[item.player].name,
-                "game": ctx.slot_info[item.player].game,
-                "flags": item.flags,
-            } for loc_id, item in ctx.locations_info.items()])
+            # Wait for scouting to complete, or the client to disconnect, whichever happens first
+            _, pending = await asyncio.wait(
+                (asyncio.create_task(ctx.scouted.wait()), asyncio.create_task(ctx.connected.wait_clear())),
+                return_when=asyncio.FIRST_COMPLETED
+            )
+            for task in pending:
+                task.cancel()
 
-            logger.debug("Proxy: Locations scouted")
+            if ctx.scouted.is_set():
+                ctx.fill_spoiler([{
+                    "location": mod_loc_map_inverse(ctx.loc_manager.loc_id_to_key[loc_id]),
+                    "item": ctx.item_names.lookup_in_slot(item.item, item.player),
+                    "player": ctx.slot_info[item.player].name,
+                    "game": ctx.slot_info[item.player].game,
+                    "flags": item.flags,
+                } for loc_id, item in ctx.locations_info.items()])
+                logger.debug("Proxy: Locations scouted")
+            else:
+                logger.debug("Proxy: Disconnected before locations were scouted")
 
     except asyncio.CancelledError:
         logger.debug("Proxy: Scout loop cancelled")
