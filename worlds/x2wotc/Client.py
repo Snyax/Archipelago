@@ -198,7 +198,7 @@ class X2WOTCContext(SuperContext):
     command_processor = X2WOTCCommandProcessor
     game = GAME_NAME
     items_handling = 0b111  # full remote
-    tags = {"AP"}
+    tags = set()
 
     settings: Settings = get_settings()
 
