@@ -222,10 +222,10 @@ def get_received_items(layer: str, number_received: int) -> ItemsInfo:
 async def handle_check(request: web.Request):
     checks = [mod_loc_map(check) for check in request.match_info["tail"].split("/") if check != ""]
 
-    if not ctx.connected.is_set():
-        await send_checks(checks, connected=False)
+    if not ctx.scouted.is_set():
+        logger.debug("Proxy: Locations not scouted during check request")
+        await send_checks(checks, connected=ctx.connected.is_set())
         return web.Response(status=503)
-    await ctx.scouted.wait()
 
     response_body = ""
     for loc_name, (item_name, network_item, slot_info) in get_locations_info(checks).items():
